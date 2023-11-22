@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Character/BaseCharacter.h"
+#include "Components/WeaponComponent.h"
 
 
 void ABaseCharacterController::BeginPlay()
@@ -33,6 +34,14 @@ void ABaseCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ABaseCharacterController::StopCrouch);
 
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ABaseCharacterController::Jump);
+
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ABaseCharacterController::StartFire);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ABaseCharacterController::StopFire);
+
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &ABaseCharacterController::Reload);
+
+		EnhancedInputComponent->BindAction(SwitchWeaponAction, ETriggerEvent::Started, this, &ABaseCharacterController::SwitchWeapon);
+
 	}
 }
 
@@ -74,6 +83,34 @@ void ABaseCharacterController::Jump(const FInputActionValue& Value)
 {
 	if (BaseCharacter) {
 		BaseCharacter->Jump();
+	}
+}
+
+void ABaseCharacterController::StartFire(const FInputActionValue& Value)
+{
+	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+		WeaponComponent->StartFire();
+	}
+}
+
+void ABaseCharacterController::StopFire(const FInputActionValue& Value)
+{
+	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+		WeaponComponent->StopFire();
+	}
+}
+
+void ABaseCharacterController::Reload(const FInputActionValue& Value)
+{
+	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+		WeaponComponent->Reload();
+	}
+}
+
+void ABaseCharacterController::SwitchWeapon(const FInputActionValue& Value)
+{
+	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+		WeaponComponent->SwitchWeapon();
 	}
 }
 

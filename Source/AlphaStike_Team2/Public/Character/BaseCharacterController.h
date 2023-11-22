@@ -25,7 +25,10 @@ protected:
 	void StartCrouch(const FInputActionValue& Value);
 	void StopCrouch(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
-
+	void StartFire(const FInputActionValue& Value);
+	void StopFire(const FInputActionValue& Value);
+	void Reload(const FInputActionValue& Value);
+	void SwitchWeapon(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* MappingContext;
@@ -40,8 +43,16 @@ protected:
 	UInputAction* JumpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* CrouchAction;
+	UInputAction* CrouchAction;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* FireAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* ReloadAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* SwitchWeaponAction;
 
 private:
 	ABaseCharacter* BaseCharacter;

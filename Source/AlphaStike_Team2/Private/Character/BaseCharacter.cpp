@@ -3,6 +3,7 @@
 #include "Character/BaseCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WeaponComponent.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -15,6 +16,8 @@ ABaseCharacter::ABaseCharacter()
 	
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(ArmComponent);
+
+	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 
 }
 

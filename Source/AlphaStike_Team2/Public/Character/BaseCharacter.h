@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UWeaponComponent;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API ABaseCharacter : public ACharacter
@@ -24,8 +25,11 @@ protected:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	USpringArmComponent* ArmComponent;
+	USpringArmComponent* ArmComponent;	
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UWeaponComponent* WeaponComponent;
+	
 public:	
 	virtual void Tick(float DeltaTime) override;
 
