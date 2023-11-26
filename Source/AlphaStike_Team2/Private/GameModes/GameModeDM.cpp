@@ -1,13 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GameModes/GameModeDM.h"
 
 #include "AIController.h"
 #include "MainGameInstance.h"
+#include "Ai/DeathMatch/AIDeathMatchTeamManager.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/TargetPoint.h"
-
 
 bool FBotSpawnInfo::IsValid() const
 {
@@ -29,8 +28,12 @@ void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 
 	InitPlayerTeamType();
 	InitPlayerSpawnIndex();
-	SpawnPlayerInsteadOfBot();
-	SpawnTeams();
+	InitTeamManagers();
+
+	const auto PlayerController = SpawnPlayerInsteadOfBot();
+	SetTeamManagerForPlayerOrBot(PlayerController, GetPlayerTeamType());
+
+	SpawnAllTeams();
 }
 
 void AGameModeDM::InitPlayerSpawnIndex()
@@ -49,18 +52,46 @@ void AGameModeDM::InitPlayerTeamType()
 		UE_LOG(LogTemp, Error, TEXT("TeamInfos.Contains(PlayerTeamType) == false"));
 }
 
-void AGameModeDM::SpawnPlayerInsteadOfBot()
+void AGameModeDM::InitTeamManagers()
 {
-	if(!TeamInfos[PlayerTeamType].Team.IsValidIndex(GetPlayerSpawnIndex()))
+	for (const auto& TeamInfo : TeamInfos)
 	{
-		UE_LOG(LogTemp, Error, TEXT("TeamInfos[PlayerTeamType].Team.IsValidIndex(SpawnIndex) == nullptr"));
-		return;
+		const auto TeamManager = TeamInfo.Value.DMTeamManager;
+		if(!TeamManager)
+		{
+			UE_LOG(LogTemp, Error, TEXT("TeamManager is not setted"));
+			return;
+		}
+		TeamManager->SetTeamType(TeamInfo.Key);
 	}
-	SpawnPlayerByInfo(TeamInfos[PlayerTeamType].Team[GetPlayerSpawnIndex()]);
-	TeamInfos[PlayerTeamType].Team[GetPlayerSpawnIndex()].bSpawn = false;
 }
 
-void AGameModeDM::SpawnTeams()
+AController* AGameModeDM::SpawnPlayerInsteadOfBot()
+{
+	check(TeamInfos[PlayerTeamType].Team.IsValidIndex(GetPlayerSpawnIndex()));
+
+	auto& SpawnInfo = TeamInfos[PlayerTeamType].Team[GetPlayerSpawnIndex()];
+	check(SpawnInfo.IsValid());
+	
+	RestartPlayerAtTransform(GetWorld()->GetFirstPlayerController(), SpawnInfo.SpawnPoint->GetTransform());
+	SpawnInfo.bSpawn = false;
+
+	return GetWorld()->GetFirstPlayerController();
+}
+
+void AGameModeDM::SetTeamManagerForPlayerOrBot(AController* Controller, ETeamType Type)
+{
+	const auto TeamManager = TeamInfos[Type].DMTeamManager.Get();
+	if(!TeamManager)
+	{
+		UE_LOG(LogTemp, Error, TEXT("TeamManager is not setted"));
+		return;
+	}
+
+	TeamManager->AddTeamMember(Controller);
+}
+
+void AGameModeDM::SpawnAllTeams()
 {
 	for (const auto& TeamInfo : TeamInfos)
 		SpawnTeam(TeamInfo.Value, TeamInfo.Key);
@@ -70,27 +101,18 @@ void AGameModeDM::SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type)
 {
 	for (const auto& BotInfo : TeamInfo.Team)
 		if(BotInfo.bSpawn)
-			SpawnBotByInfo(BotInfo);
+		{
+			const auto Bot = SpawnBotByInfo(BotInfo);
+			SetTeamManagerForPlayerOrBot(Bot->GetController(), Type);
+		}
 }
 
-void AGameModeDM::SpawnPlayerByInfo(const FBotSpawnInfo& SpawnInfo)
+ACharacter* AGameModeDM::SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const
 {
 	if(!SpawnInfo.IsValid())
 	{
 		UE_LOG(LogTemp, Error, TEXT("SpawnInfo is not valid"));
-		return;
-	}
-	
-	DefaultPawnClass = SpawnInfo.BotClass.Get();
-	RestartPlayerAtTransform(GetWorld()->GetFirstPlayerController(), SpawnInfo.SpawnPoint->GetTransform());
-}
-
-void AGameModeDM::SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo)
-{
-	if(!SpawnInfo.IsValid())
-	{
-		UE_LOG(LogTemp, Error, TEXT("SpawnInfo is not valid"));
-		return;
+		return nullptr;
 	}
 
 	FActorSpawnParameters SpawnParams;
@@ -99,4 +121,5 @@ void AGameModeDM::SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo)
 
 	Bot->AIControllerClass = SpawnInfo.BotController.Get();
 	Bot->SpawnDefaultController();
+	return Bot;
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
 #include "BaseCharacterController.generated.h"
@@ -12,13 +13,13 @@ class UInputAction;
 class ABaseCharacter;
 
 UCLASS()
-class ALPHASTIKE_TEAM2_API ABaseCharacterController : public APlayerController
+class ALPHASTIKE_TEAM2_API ABaseCharacterController : public APlayerController, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 	
 protected:
-	virtual void BeginPlay()override;
-	virtual void SetupInputComponent()override;
+	virtual void OnPossess(APawn* aPawn) override;
+	virtual void SetupInputComponent() override;
 
 	void Move(const FInputActionValue& Value);	
 	void Look(const FInputActionValue& Value);
@@ -30,6 +31,10 @@ protected:
 	void Reload(const FInputActionValue& Value);
 	void SwitchWeapon(const FInputActionValue& Value);
 
+public:
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+	
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* MappingContext;
 
@@ -53,7 +58,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* SwitchWeaponAction;
-
+	
 private:
 	ABaseCharacter* BaseCharacter;
 

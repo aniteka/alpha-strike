@@ -8,18 +8,17 @@
 #include "Components/WeaponComponent.h"
 
 
-void ABaseCharacterController::BeginPlay()
+void ABaseCharacterController::OnPossess(APawn* aPawn)
 {
-	Super::BeginPlay();
+	Super::OnPossess(aPawn);
 
-	check(GetPawn());
+	check(aPawn);
 
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())) {
 		Subsystem->AddMappingContext(MappingContext, 0);
 	}
 
 	BaseCharacter = Cast<ABaseCharacter>(GetPawn());
-
 }
 
 void ABaseCharacterController::SetupInputComponent()
@@ -112,5 +111,17 @@ void ABaseCharacterController::SwitchWeapon(const FInputActionValue& Value)
 	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->SwitchWeapon();
 	}
+}
+
+ETeamAttitude::Type ABaseCharacterController::GetTeamAttitudeTowards(const AActor& Other) const
+{
+	if (const APawn* OtherPawn = Cast<APawn>(&Other))
+	{
+		if (const IGenericTeamAgentInterface* TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController()))
+		{
+			return IGenericTeamAgentInterface::GetTeamAttitudeTowards(*OtherPawn->GetController());
+		}
+	}
+	return IGenericTeamAgentInterface::GetTeamAttitudeTowards(Other);
 }
 
