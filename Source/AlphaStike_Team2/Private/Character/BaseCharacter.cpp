@@ -24,7 +24,7 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//bUseControllerRotationYaw = false;
 }
 
 void ABaseCharacter::Tick(float DeltaTime)

@@ -63,6 +63,7 @@ void ABaseCharacterController::Look(const FInputActionValue& Value)
 		BaseCharacter->AddControllerYawInput(LookVector.X);
 		BaseCharacter->AddControllerPitchInput(-LookVector.Y);
 	}
+	
 }
 
 void ABaseCharacterController::StartCrouch(const FInputActionValue& Value)
