@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "WeaponComponent.generated.h"
 
+class ABaseWeapon;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ALPHASTIKE_TEAM2_API UWeaponComponent : public UActorComponent
@@ -23,7 +24,18 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
+	TArray<TSubclassOf<ABaseWeapon>> WeaponClasses;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName WeaponSocketName = "WeaponSocket";
 
-		
+private:
+	TArray<ABaseWeapon*> Weapons;
+
+	ABaseWeapon* CurrentWeapon = nullptr;
+
+	void CreateWeapon();
+	bool CanReload()const;
 };
