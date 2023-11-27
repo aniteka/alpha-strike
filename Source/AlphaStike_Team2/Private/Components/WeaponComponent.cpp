@@ -14,31 +14,35 @@ UWeaponComponent::UWeaponComponent()
 
 void UWeaponComponent::StartFire()
 {
-	UE_LOG(LogTemp, Display, TEXT("StartFire"));
 	if (CurrentWeapon) {
+		UE_LOG(LogTemp, Display, TEXT("StartFire"));
 		CurrentWeapon->StartFire();
 	}
 }
 
 void UWeaponComponent::StopFire()
 {
-	UE_LOG(LogTemp, Display, TEXT("StopFire"));
 	if (CurrentWeapon) {
+		UE_LOG(LogTemp, Display, TEXT("StopFire"));
 		CurrentWeapon->StopFire();
 	}
 }
 
 void UWeaponComponent::Reload()
 {
-	UE_LOG(LogTemp, Display, TEXT("Reload"));
 	if (CurrentWeapon && CanReload()) {
+		UE_LOG(LogTemp, Display, TEXT("Reload"));
 		CurrentWeapon->Reload();
 	}
 }
 
 void UWeaponComponent::SwitchWeapon()
 {
-	UE_LOG(LogTemp, Display, TEXT("SwitchWeapon"));
+	if (Weapons.Num() > 1) {
+		UE_LOG(LogTemp, Display, TEXT("SwitchWeapon"));
+		WeaponIndex = (WeaponIndex + 1) % Weapons.Num();
+		TakeWeapon();
+	}
 }
 
 
@@ -49,6 +53,7 @@ void UWeaponComponent::BeginPlay()
 	checkf(WeaponClasses.Num() > 0, TEXT("Need to add WeaponClass"));
 
 	CreateWeapon();
+	TakeWeapon();
 }
 
 void UWeaponComponent::CreateWeapon()
@@ -73,16 +78,22 @@ void UWeaponComponent::CreateWeapon()
 		CurWeapon->OnClipEmpty.AddUObject(this, &UWeaponComponent::Reload);
 		CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false), WeaponSocketName);
 	
-		Weapons.Add(CurWeapon);
+		Weapons.Add(CurWeapon); 
 	}	
-
-
-	CurrentWeapon = Weapons[0];
 }
 
 bool UWeaponComponent::CanReload() const
 {
 	return CurrentWeapon->CanReload();
+}
+
+void UWeaponComponent::TakeWeapon()
+{
+	if (CurrentWeapon) {
+		CurrentWeapon->StopFire();
+	}
+
+	CurrentWeapon = Weapons[WeaponIndex];
 }
 
 

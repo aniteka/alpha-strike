@@ -4,30 +4,22 @@
 #include "Weapons/Rifle.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "Weapons/Projectile.h"
 
-
-ARifle::ARifle() {
-
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	SetRootComponent(WeaponMesh);
-}
-
-void ARifle::BeginPlay()
-{
-	Super::BeginPlay();
-
-	check(WeaponMesh);
-}
 
 void ARifle::StartFire()
 {
 	Shot();
 }
 
-
 void ARifle::Shot()
 {
 	if (IsAmmoEmpty()) {
+		return;
+	}
+
+	const auto Player = Cast<ABaseCharacter>(GetOwner());
+	if (!Player) {
 		return;
 	}
 
@@ -38,28 +30,22 @@ void ARifle::Shot()
 		return;
 	}
 
+	const auto LeftHandMuzzleLocation = Player->GetMesh()->GetSocketLocation(LeftHandMuzzleSocketName);
+	const auto RightHandMuzzleLocation = Player->GetMesh()->GetSocketLocation(RightHandMuzzleSocketName);
+
 	FHitResult HitResult;
 
-	DrawDebugLine(GetWorld(), WeaponMesh->GetSocketLocation(MuzzleSocketName), EndPoint, FColor::Red, false, 3.f, 0, 3.f);
-	GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECollisionChannel::ECC_Visibility);
-	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.f, 24, FColor::Red, false, 3.f, 0, 3.f);
+	auto Direction = (EndPoint - (HandIndex == 0 ? LeftHandMuzzleLocation: RightHandMuzzleLocation)).GetSafeNormal();
 
-	if (HitResult.bBlockingHit) {
-		const auto OtherPlayer = HitResult.GetActor();
+	FTransform Spawn(FRotator::ZeroRotator, (HandIndex == 0 ? LeftHandMuzzleLocation : RightHandMuzzleLocation));
+	auto Rocket = GetWorld()->SpawnActorDeferred<AProjectile>(ProjectileClass, Spawn);
 
-		if (!OtherPlayer) {
-			return;
-		}
-
-		const auto Player = Cast<ABaseCharacter>(GetOwner());
-
-		if (!Player) {
-			return;
-		}
-
-		OtherPlayer->TakeDamage(AmountOfDamage, FDamageEvent{}, Player->GetController(), this);
-
+	if (Rocket) {
+		Rocket->SetOwner(GetOwner());
+		Rocket->SetupDirection(Direction);
+		Rocket->FinishSpawning(Spawn);
 	}
 
+	HandIndex = (HandIndex + 1) % 2;
 	DecreaseAmmo();
 }

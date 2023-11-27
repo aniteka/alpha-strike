@@ -29,13 +29,16 @@ protected:
 	TArray<TSubclassOf<ABaseWeapon>> WeaponClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	FName WeaponSocketName = "WeaponSocket";
+	FName WeaponSocketName = "LeftHandMuzzle";
 
 private:
 	TArray<ABaseWeapon*> Weapons;
 
 	ABaseWeapon* CurrentWeapon = nullptr;
 
+	int32 WeaponIndex = 0;
+
 	void CreateWeapon();
 	bool CanReload()const;
+	void TakeWeapon();
 };

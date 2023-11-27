@@ -63,9 +63,15 @@ protected:
 	float AmountOfDamage = 10.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	FName MuzzleSocketName = "MuzzleSocket";
+	FName LeftHandMuzzleSocketName = "LeftHandMuzzle";
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	FName RightHandMuzzleSocketName = "RightHandMuzzle";
+
+	int32 HandIndex = 0;
 private:
 
 	FAmmoData CurrentAmmoData;
+
+	
 };

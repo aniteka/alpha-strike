@@ -25,6 +25,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UStaticMeshComponent* WeaponMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
+	FName MuzzleSocketName = "MuzzleSocket";
 
 private:
 

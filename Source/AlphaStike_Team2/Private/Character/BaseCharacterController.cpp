@@ -18,6 +18,9 @@ void ABaseCharacterController::BeginPlay()
 		Subsystem->AddMappingContext(MappingContext, 0);
 	}
 
+	SetInputMode(FInputModeGameOnly());
+	bShowMouseCursor = false;
+
 	BaseCharacter = Cast<ABaseCharacter>(GetPawn());
 
 }

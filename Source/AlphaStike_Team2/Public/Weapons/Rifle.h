@@ -6,22 +6,19 @@
 #include "Weapons/BaseWeapon.h"
 #include "Rifle.generated.h"
 
+class AProjectile;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API ARifle : public ABaseWeapon
 {
 	GENERATED_BODY()
-public:
-	ARifle();
+
 
 protected:
-
-	virtual void BeginPlay()override;
-
 	virtual void StartFire()override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	USkeletalMeshComponent* WeaponMesh;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Projectile")
+	TSubclassOf<AProjectile> ProjectileClass;
 
 private:
 

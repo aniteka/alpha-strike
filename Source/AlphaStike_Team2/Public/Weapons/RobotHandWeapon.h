@@ -19,18 +19,10 @@ protected:
 	virtual void StopFire()override;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	FName LeftHandMuzzleSocketName = "LeftHandMuzzle";
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
-	FName RightHandMuzzleSocketName = "RightHandMuzzle";
-
 private:
 
 	FTimerHandle StartFireTimerHandle;
 
 	void Shot();
-
-	int32 HandIndex = 0;
 
 };
