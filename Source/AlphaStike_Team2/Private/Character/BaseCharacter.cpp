@@ -51,7 +51,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ABaseCharacter::RotateBody()
 {
-	FRotator BodyRotation = { 0.f, ArmComponent->GetComponentRotation().Yaw - 90,0.f };
+	FRotator BodyRotation = { 0.f, ArmComponent->GetComponentRotation().Yaw - 90,0.f }; // -90 this is the difference in angle due to the incorrect positioning of the model in Blender.
 	MeshBody->SetWorldRotation(BodyRotation);
 }
 
