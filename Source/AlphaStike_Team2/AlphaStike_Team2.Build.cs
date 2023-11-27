@@ -13,8 +13,11 @@ public class AlphaStike_Team2 : ModuleRules
             "CoreUObject",
             "Engine",
             "InputCore",
-            "EnhancedInput",
-            "Niagara"});
+            "Niagara",
+            "EnhancedInput", 
+            "AIModule",
+            "GameplayTasks"
+        });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
 
