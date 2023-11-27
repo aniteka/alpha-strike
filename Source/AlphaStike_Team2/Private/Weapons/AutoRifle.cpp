@@ -19,7 +19,7 @@ void AAutoRifle::BeginPlay()
 
 void AAutoRifle::StartFire()
 {
-	GetWorldTimerManager().SetTimer(StartFireTimerHandle, this, &AAutoRifle::Shot, 0.1f, true);
+	GetWorldTimerManager().SetTimer(StartFireTimerHandle, this, &AAutoRifle::Shot, 0.1f, true, 0.0f);
 }
 
 void AAutoRifle::StopFire()
