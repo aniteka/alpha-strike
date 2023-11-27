@@ -14,7 +14,9 @@ public class AlphaStike_Team2 : ModuleRules
             "Engine",
             "InputCore",
             "EnhancedInput", 
-            "AIModule"});
+            "AIModule",
+            "GameplayTasks"
+        });
 
         PrivateDependencyModuleNames.AddRange(new string[] { });
 

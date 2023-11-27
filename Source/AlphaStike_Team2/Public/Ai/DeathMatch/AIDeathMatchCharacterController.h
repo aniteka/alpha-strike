@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "DetourCrowdAIController.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "AIDeathMatchCharacterController.generated.h"
+
+class UAIRouteManagerComponent;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API AAIDeathMatchCharacterController : public AAIController
@@ -15,10 +18,25 @@ public:
 	AAIDeathMatchCharacterController();
 
 protected:
-	virtual void BeginPlay() override;
-
+	virtual void OnPossess(APawn* InPawn) override;
+	
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+
+	
 	
 public:
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
+		UAIPerceptionComponent* BasePerceptionComponent;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
+		UAIRouteManagerComponent* RouteManagerComponent;
+	
+	UPROPERTY(EditAnywhere, Category = "Ai")
+		UBehaviorTree* MainBehaviorTree;
+
+private:
+	UFUNCTION()
+	void OnTargetPerceptionUpdatedCallback(const FActorPerceptionUpdateInfo& UpdateInfo);
 };

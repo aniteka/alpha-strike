@@ -4,6 +4,7 @@
 #include "Ai/DeathMatch/AIDeathMatchTeamManager.h"
 
 #include "AIController.h"
+#include "Ai/Components/AIRouteManagerComponent.h"
 #include "Components/BillboardComponent.h"
 
 
@@ -22,7 +23,22 @@ AAIDeathMatchTeamManager::AAIDeathMatchTeamManager()
 void AAIDeathMatchTeamManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	/*
+	 * TODO Refactor next
+	 */
+	if(PossibleRoutes.Num() == 0)
+		return;
+	for (const auto& Controller : Team)
+	{
+		if(!Controller.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Controller from team is not valid"));
+			continue;
+		}
+		if(const auto RouteManagerComponent = Controller->GetComponentByClass<UAIRouteManagerComponent>())
+			RouteManagerComponent->SetCurrentRoute(PossibleRoutes[FMath::RandRange(0, PossibleRoutes.Num() - 1)]);
+	}
 }
 
 void AAIDeathMatchTeamManager::Tick(float DeltaTime)

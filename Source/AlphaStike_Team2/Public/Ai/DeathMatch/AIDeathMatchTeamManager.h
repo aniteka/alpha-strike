@@ -7,6 +7,7 @@
 #include "AlphaStrikeTypes.h"
 #include "AIDeathMatchTeamManager.generated.h"
 
+class AAIRoute;
 class AAIController;
 class UBillboardComponent;
 
@@ -33,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UBillboardComponent* BaseComponent;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Ai|Routes")
+		TArray<TSoftObjectPtr<AAIRoute>> PossibleRoutes;
+	
 	TArray<TSoftObjectPtr<AController>> Team;
 	
 	ETeamType TeamType = ETeamType::None;
