@@ -29,10 +29,21 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
 	UWeaponComponent* WeaponComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
+	TObjectPtr<UStaticMeshComponent> MeshBody{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
+	TObjectPtr<UStaticMeshComponent> R_Hand{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
+	TObjectPtr<UStaticMeshComponent> L_Hand{ nullptr };
 	
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void RotateBody();
+	void RotateHands(float LookAtTarget);
 };

@@ -19,6 +19,15 @@ ABaseCharacter::ABaseCharacter()
 
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 
+	MeshBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Body"));
+	MeshBody->SetupAttachment(GetMesh());
+	MeshBody->SetupAttachment(GetMesh(), FName(TEXT("Body_Soket")));
+
+	R_Hand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Right Hand"));
+	R_Hand->SetupAttachment(MeshBody);
+
+	L_Hand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Left Hand"));
+	L_Hand->SetupAttachment(MeshBody);
 }
 
 void ABaseCharacter::BeginPlay()
@@ -31,11 +40,30 @@ void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	RotateBody();
 }
 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABaseCharacter::RotateBody()
+{
+	FRotator BodyRotation = { 0.f, ArmComponent->GetComponentRotation().Yaw - 90,0.f };
+	MeshBody->SetWorldRotation(BodyRotation);
+}
+
+void ABaseCharacter::RotateHands(float LookAtTarget)
+{
+	/*double deltaAngle = LookAtTarget - R_Hand->GetRelativeRotation().Pitch;
+	
+	R_Hand->AddRelativeRotation({ deltaAngle,0,0 });
+	L_Hand->AddRelativeRotation({ deltaAngle,0,0 });*/
+
+	FRotator HandsRotation = { ArmComponent->GetComponentRotation().Pitch, 0.f, 0.f };
+	R_Hand->SetRelativeRotation(HandsRotation);
+	L_Hand->SetRelativeRotation(HandsRotation);
 }
 
