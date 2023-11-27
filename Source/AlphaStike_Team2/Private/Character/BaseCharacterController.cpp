@@ -62,6 +62,8 @@ void ABaseCharacterController::Look(const FInputActionValue& Value)
 	if (BaseCharacter) {
 		BaseCharacter->AddControllerYawInput(LookVector.X);
 		BaseCharacter->AddControllerPitchInput(-LookVector.Y);
+
+		BaseCharacter->RotateHands(LookVector.Y);
 	}
 	
 }
