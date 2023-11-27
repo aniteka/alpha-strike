@@ -32,6 +32,12 @@ protected:
 	void SwitchWeapon(const FInputActionValue& Value);
 
 public:
+
+	/*
+	 * Implementation of IGenericTeamAgentInterface
+	 */
+	virtual void SetGenericTeamId(const FGenericTeamId& TeamID) override { GenericTeamId = TeamID; };
+	virtual FGenericTeamId GetGenericTeamId() const override { return GenericTeamId; };
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 	
 protected:
@@ -61,5 +67,5 @@ protected:
 	
 private:
 	ABaseCharacter* BaseCharacter;
-
+	FGenericTeamId GenericTeamId;
 };
