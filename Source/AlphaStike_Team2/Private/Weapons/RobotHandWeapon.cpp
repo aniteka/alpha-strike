@@ -13,7 +13,7 @@ void ARobotHandWeapon::BeginPlay()
 
 void ARobotHandWeapon::StartFire()
 {
-	GetWorldTimerManager().SetTimer(StartFireTimerHandle, this, &ARobotHandWeapon::Shot, 0.1f, true);
+	GetWorldTimerManager().SetTimer(StartFireTimerHandle, this, &ARobotHandWeapon::Shot, 0.1f, true, 0.f);
 }
 
 
@@ -45,7 +45,9 @@ void ARobotHandWeapon::Shot()
 
 	FHitResult HitResult;
 
-	GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECollisionChannel::ECC_Visibility);
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(GetOwner());
+	GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECollisionChannel::ECC_Visibility, Params);
 	DrawDebugLine(GetWorld(), HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, FColor::Red, false, 3.f, 0, 3.f);
 	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.f, 24, FColor::Red, false, 3.f, 0, 3.f);
 

@@ -4,7 +4,7 @@
 
 #include "AIController.h"
 #include "MainGameInstance.h"
-#include "Ai/DeathMatch/AIDeathMatchTeamManager.h"
+#include "Ai/DeathMatch/DEPRECATED_AIDeathMatchTeamManager.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/TargetPoint.h"
 
@@ -28,12 +28,19 @@ void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 
 	InitPlayerTeamType();
 	InitPlayerSpawnIndex();
-	InitTeamManagers();
 
 	const auto PlayerController = SpawnPlayerInsteadOfBot();
-	SetTeamManagerForPlayerOrBot(PlayerController, GetPlayerTeamType());
-
+	if(const auto TeamAgent = Cast<IGenericTeamAgentInterface>(PlayerController))
+		TeamAgent->SetGenericTeamId({static_cast<uint8>(GetPlayerTeamType())});
+	
 	SpawnAllTeams();
+}
+
+TSoftObjectPtr<AAIRoute> AGameModeDM::GetRouteForTeam(ETeamType Type)
+{
+	if(Type == ETeamType::None || !TeamInfos.Find(Type) || TeamInfos[Type].Routes.Num() == 0)
+		return nullptr;
+	return TeamInfos[Type].Routes[FMath::RandRange(0, TeamInfos[Type].Routes.Num() - 1)];
 }
 
 void AGameModeDM::InitPlayerSpawnIndex()
@@ -52,20 +59,6 @@ void AGameModeDM::InitPlayerTeamType()
 		UE_LOG(LogTemp, Error, TEXT("TeamInfos.Contains(PlayerTeamType) == false"));
 }
 
-void AGameModeDM::InitTeamManagers()
-{
-	for (const auto& TeamInfo : TeamInfos)
-	{
-		const auto TeamManager = TeamInfo.Value.DMTeamManager;
-		if(!TeamManager)
-		{
-			UE_LOG(LogTemp, Error, TEXT("TeamManager is not setted"));
-			return;
-		}
-		TeamManager->SetTeamType(TeamInfo.Key);
-	}
-}
-
 AController* AGameModeDM::SpawnPlayerInsteadOfBot()
 {
 	check(TeamInfos[PlayerTeamType].Team.IsValidIndex(GetPlayerSpawnIndex()));
@@ -77,18 +70,6 @@ AController* AGameModeDM::SpawnPlayerInsteadOfBot()
 	SpawnInfo.bSpawn = false;
 
 	return GetWorld()->GetFirstPlayerController();
-}
-
-void AGameModeDM::SetTeamManagerForPlayerOrBot(AController* Controller, ETeamType Type)
-{
-	const auto TeamManager = TeamInfos[Type].DMTeamManager.Get();
-	if(!TeamManager)
-	{
-		UE_LOG(LogTemp, Error, TEXT("TeamManager is not setted"));
-		return;
-	}
-
-	TeamManager->AddTeamMember(Controller);
 }
 
 void AGameModeDM::SpawnAllTeams()
@@ -103,7 +84,8 @@ void AGameModeDM::SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type)
 		if(BotInfo.bSpawn)
 		{
 			const auto Bot = SpawnBotByInfo(BotInfo);
-			SetTeamManagerForPlayerOrBot(Bot->GetController(), Type);
+			if(const auto TeamAgent = Bot->GetController<IGenericTeamAgentInterface>())
+				TeamAgent->SetGenericTeamId({static_cast<uint8>(Type)});
 		}
 }
 

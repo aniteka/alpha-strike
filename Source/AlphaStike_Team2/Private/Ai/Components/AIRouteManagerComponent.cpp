@@ -6,6 +6,7 @@
 #include "AITypes.h"
 #include "Ai/AIRoute.h"
 #include "Components/SplineComponent.h"
+#include "GameModes/GameModeDM.h"
 
 
 UAIRouteManagerComponent::UAIRouteManagerComponent()
@@ -14,17 +15,20 @@ UAIRouteManagerComponent::UAIRouteManagerComponent()
 
 }
 
-
 void UAIRouteManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	TryGetRouteFromGM();
 }
 
 void UAIRouteManagerComponent::SetNextPointIndex()
 {
-	if(IsLastPointIndex())
+	if(IsLastPointIndex() || !CurrentRoute.IsValid())
+	{
+		TryGetRouteFromGM();
 		return;
+	}
 	CurrentPointIndex += 1;
 }
 
@@ -38,5 +42,13 @@ FVector UAIRouteManagerComponent::GetCurrentLocation() const
 	if(!CurrentRoute.IsValid() || !CurrentRoute->GetSplineComponent())
 		return FAISystem::InvalidLocation;
 	return CurrentRoute->GetSplineComponent()->GetLocationAtSplinePoint(CurrentPointIndex, ESplineCoordinateSpace::World);
+}
+
+void UAIRouteManagerComponent::TryGetRouteFromGM()
+{
+	const auto GameMode = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	const auto TeamAgent = GetOwner<IGenericTeamAgentInterface>(); 
+	check(GameMode);
+	CurrentRoute = GameMode->GetRouteForTeam(static_cast<ETeamType>(TeamAgent->GetGenericTeamId().GetId()));
 }
 

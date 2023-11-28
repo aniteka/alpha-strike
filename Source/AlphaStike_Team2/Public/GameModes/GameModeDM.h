@@ -7,7 +7,8 @@
 #include "GameFramework/GameMode.h"
 #include "GameModeDM.generated.h"
 
-class AAIDeathMatchTeamManager;
+class AAIRoute;
+class ADEPRECATED_AIDeathMatchTeamManager;
 class AAIController;
 class ABaseCharacter;
 class ATargetPoint;
@@ -41,7 +42,7 @@ struct FTeamInfo
 	TArray<FBotSpawnInfo> Team;
 
 	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<AAIDeathMatchTeamManager> DMTeamManager;
+	TArray<TSoftObjectPtr<AAIRoute>> Routes;
 };
 
 UCLASS()
@@ -57,6 +58,8 @@ public:
 	void SetPlayerTeamType(ETeamType NewPlayerTeamType) { PlayerTeamType = NewPlayerTeamType; }
 
 	int32 GetPlayerSpawnIndex() const { return PlayerSpawnIndex; }
+
+	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Spawn")
@@ -73,11 +76,7 @@ private:
 	void InitPlayerSpawnIndex();
 	void InitPlayerTeamType();
 	
-	void InitTeamManagers();
-	
 	AController* SpawnPlayerInsteadOfBot();
-	
-	void SetTeamManagerForPlayerOrBot(AController* Controller, ETeamType Type);
 	
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);

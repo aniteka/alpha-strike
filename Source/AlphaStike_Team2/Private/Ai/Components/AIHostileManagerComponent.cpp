@@ -37,22 +37,21 @@ ACharacter* UAIHostileManagerComponent::TryToFindClosestHostile() const
 	check(Controller && PercComp && Controller->GetPawn());
 
 	TArray<AActor*> HostileCharacters;
-	PercComp->GetHostileActorsBySense(UAISense_Sight::StaticClass(), HostileCharacters);
-
+	PercComp->GetCurrentlyPerceivedActors(nullptr, HostileCharacters);
+	
+	
 	float Dist;
 	return Cast<ACharacter>(UGameplayStatics::FindNearestActor(Controller->GetPawn()->GetActorLocation(), HostileCharacters, Dist));
 }
 
 void UAIHostileManagerComponent::OnPerceptionUpdatedCallback(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
-	if(UpdateInfo.Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
-	{
-		if(UpdateInfo.Target.IsValid() && UpdateInfo.Stimulus.WasSuccessfullySensed())
-			SetHostile(UpdateInfo.Target.Get());
-		else
-		{
-			const auto OtherHostile = TryToFindClosestHostile();
-			SetHostile(OtherHostile);
-		}
-	}
+	if(!UpdateInfo.Target.IsValid())
+		return;
+
+	if(!GetHostile() && UpdateInfo.Stimulus.WasSuccessfullySensed())
+		SetHostile(UpdateInfo.Target.Get());
+
+	if(GetHostile() && GetHostile() == UpdateInfo.Target.Get() && !UpdateInfo.Stimulus.WasSuccessfullySensed())
+		SetHostile(TryToFindClosestHostile());
 }
