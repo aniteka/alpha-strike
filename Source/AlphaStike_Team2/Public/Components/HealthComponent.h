@@ -18,6 +18,7 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();
 
+	UFUNCTION()
 	void DamageTaken(AActor* DamageActor, float Damage, const UDamageType* DamageType, AController* Instigator, AActor* DamageCauser);
 
 	void HandleDestroy(AActor* DamageActor);

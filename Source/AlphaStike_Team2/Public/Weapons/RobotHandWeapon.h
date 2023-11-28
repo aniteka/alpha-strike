@@ -18,6 +18,8 @@ protected:
 	virtual void StartFire()override;
 	virtual void StopFire()override;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Shot")
+	float ShotRate = 0.1f;
 
 private:
 

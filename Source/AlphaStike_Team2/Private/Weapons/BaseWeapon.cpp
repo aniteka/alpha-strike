@@ -60,7 +60,8 @@ bool ABaseWeapon::CalculateTrace(FVector& StartPoint, FVector& EndPoint) const
 	Controller->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
 	StartPoint = CameraLocation;
-	const auto Direction = CameraRotation.Vector();
+	const auto Rad = FMath::DegreesToRadians(Spread);
+	const auto Direction = FMath::VRandCone(CameraRotation.Vector(),Rad);
 	EndPoint = StartPoint + Direction * ShotDistance;
 
 	return true;
