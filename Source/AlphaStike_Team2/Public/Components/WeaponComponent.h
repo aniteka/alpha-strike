@@ -22,6 +22,8 @@ public:
 	void Reload();
 	void SwitchWeapon();
 
+	ABaseWeapon* GetCurrentWeapon() const { return CurrentWeapon; }
+	
 protected:
 	virtual void BeginPlay() override;
 	

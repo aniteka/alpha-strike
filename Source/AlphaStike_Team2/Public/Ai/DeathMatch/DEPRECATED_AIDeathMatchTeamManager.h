@@ -5,19 +5,19 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "AlphaStrikeTypes.h"
-#include "AIDeathMatchTeamManager.generated.h"
+#include "DEPRECATED_AIDeathMatchTeamManager.generated.h"
 
 class AAIRoute;
 class AAIController;
 class UBillboardComponent;
 
-UCLASS()
-class ALPHASTIKE_TEAM2_API AAIDeathMatchTeamManager : public AActor
+UCLASS(Deprecated)
+class ALPHASTIKE_TEAM2_API ADEPRECATED_AIDeathMatchTeamManager : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AAIDeathMatchTeamManager();
+	ADEPRECATED_AIDeathMatchTeamManager();
 
 protected:
 	virtual void BeginPlay() override;

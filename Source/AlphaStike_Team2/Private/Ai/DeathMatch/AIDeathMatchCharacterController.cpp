@@ -5,6 +5,7 @@
 
 #include "Ai/Components/AIHostileManagerComponent.h"
 #include "Ai/Components/AIRouteManagerComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Sight.h"
 
@@ -42,4 +43,21 @@ ETeamAttitude::Type AAIDeathMatchCharacterController::GetTeamAttitudeTowards(con
 void AAIDeathMatchCharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AAIDeathMatchCharacterController::UpdateControlRotation(float DeltaTime, bool bUpdatePawn)
+{
+	Super::UpdateControlRotation(DeltaTime, false);
+	 
+	if (bUpdatePawn)
+	{
+		APawn* const MyPawn = GetPawn();
+		const FRotator CurrentPawnRotation = MyPawn->GetActorRotation();
+	 
+		SmoothTargetRotation = UKismetMathLibrary::RInterpTo_Constant(MyPawn->GetActorRotation(), ControlRotation, DeltaTime, SmoothFocusInterpSpeed);
+		if (CurrentPawnRotation.Equals(SmoothTargetRotation, 1e-3f) == false)
+		{
+			MyPawn->FaceRotation(SmoothTargetRotation, DeltaTime);
+		}
+	}
 }

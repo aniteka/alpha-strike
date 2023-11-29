@@ -40,4 +40,7 @@ protected:
 	TSoftObjectPtr<AAIRoute> CurrentRoute = nullptr;
 
 	int32 CurrentPointIndex = 0;
+
+private:
+	void TryGetRouteFromGM();
 };

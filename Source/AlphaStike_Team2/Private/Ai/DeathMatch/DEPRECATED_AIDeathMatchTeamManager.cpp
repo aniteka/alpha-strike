@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Ai/DeathMatch/AIDeathMatchTeamManager.h"
+#include "Ai/DeathMatch/DEPRECATED_AIDeathMatchTeamManager.h"
 
 #include "AIController.h"
 #include "Ai/Components/AIRouteManagerComponent.h"
 #include "Components/BillboardComponent.h"
 
 
-AAIDeathMatchTeamManager::AAIDeathMatchTeamManager()
+ADEPRECATED_AIDeathMatchTeamManager::ADEPRECATED_AIDeathMatchTeamManager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -20,7 +20,7 @@ AAIDeathMatchTeamManager::AAIDeathMatchTeamManager()
 #endif
 }
 
-void AAIDeathMatchTeamManager::BeginPlay()
+void ADEPRECATED_AIDeathMatchTeamManager::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -41,12 +41,12 @@ void AAIDeathMatchTeamManager::BeginPlay()
 	}
 }
 
-void AAIDeathMatchTeamManager::Tick(float DeltaTime)
+void ADEPRECATED_AIDeathMatchTeamManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AAIDeathMatchTeamManager::AddTeamMember(TSoftObjectPtr<AController> Controller)
+void ADEPRECATED_AIDeathMatchTeamManager::AddTeamMember(TSoftObjectPtr<AController> Controller)
 {
 	check(Controller.IsValid());
 	Team.Add(Controller);
