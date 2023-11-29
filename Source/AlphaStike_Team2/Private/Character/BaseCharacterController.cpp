@@ -60,14 +60,12 @@ void ABaseCharacterController::Move(const FInputActionValue& Value)
 void ABaseCharacterController::Look(const FInputActionValue& Value)
 {
 	FVector2D LookVector = Value.Get<FVector2D>();
-
 	if (BaseCharacter) {
 		BaseCharacter->AddControllerYawInput(LookVector.X);
 		BaseCharacter->AddControllerPitchInput(-LookVector.Y);
 
-		BaseCharacter->RotateHands(LookVector.Y);
+		BaseCharacter->RotateHands(-LookVector.Y);
 	}
-	
 }
 
 void ABaseCharacterController::StartCrouch(const FInputActionValue& Value)

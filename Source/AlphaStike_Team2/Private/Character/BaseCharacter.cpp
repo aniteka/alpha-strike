@@ -10,12 +10,7 @@ ABaseCharacter::ABaseCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	ArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
-	ArmComponent->bUsePawnControlRotation = true;
-	ArmComponent->SetupAttachment(GetRootComponent());
 	
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
-	CameraComponent->SetupAttachment(ArmComponent);
 
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 
@@ -28,6 +23,13 @@ ABaseCharacter::ABaseCharacter()
 
 	L_Hand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Left Hand"));
 	L_Hand->SetupAttachment(MeshBody);
+
+	ArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	ArmComponent->bUsePawnControlRotation = false;
+	ArmComponent->SetupAttachment(R_Hand);
+
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetupAttachment(ArmComponent);
 }
 
 void ABaseCharacter::BeginPlay()
@@ -51,19 +53,28 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ABaseCharacter::RotateBody()
 {
-	FRotator BodyRotation = { 0.f, ArmComponent->GetComponentRotation().Yaw - 90,0.f }; // -90 this is the difference in angle due to the incorrect positioning of the model in Blender.
+	FRotator BodyRotation = { 0.f, GetControlRotation().Yaw -90, 0.f}; // -90 this is the difference in angle due to the incorrect positioning of the model in Blender.
 	MeshBody->SetWorldRotation(BodyRotation);
+}
+
+bool ABaseCharacter::HandsRotationInRange(const float& LookAtTarget)
+{
+	double CurrentRotation = R_Hand->GetRelativeRotation().Roll;
+	if ((CurrentRotation >= -50 && LookAtTarget < 0.f) ||
+		(CurrentRotation <= 50 && LookAtTarget > 0.f))
+	{
+		return true;
+	}
+	return false;
 }
 
 void ABaseCharacter::RotateHands(float LookAtTarget)
 {
-	/*double deltaAngle = LookAtTarget - R_Hand->GetRelativeRotation().Pitch;
-	
-	R_Hand->AddRelativeRotation({ deltaAngle,0,0 });
-	L_Hand->AddRelativeRotation({ deltaAngle,0,0 });*/
-
-	FRotator HandsRotation = { ArmComponent->GetComponentRotation().Pitch, 0.f, 0.f };
-	R_Hand->SetRelativeRotation(HandsRotation);
-	L_Hand->SetRelativeRotation(HandsRotation);
+	if (HandsRotationInRange(LookAtTarget))
+	{
+		FRotator HandsRotation = { 0.f, 0.f,  LookAtTarget };
+		R_Hand->AddLocalRotation(HandsRotation);
+		L_Hand->AddLocalRotation(HandsRotation);
+	}
 }
 

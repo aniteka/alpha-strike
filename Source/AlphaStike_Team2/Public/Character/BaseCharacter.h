@@ -14,6 +14,8 @@ UCLASS()
 class ALPHASTIKE_TEAM2_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
+private:
+	
 
 public:
 	ABaseCharacter();
@@ -46,4 +48,5 @@ public:
 
 	void RotateBody();
 	void RotateHands(float LookAtTarget);
+	bool HandsRotationInRange(const float& LookAtTarget);
 };
