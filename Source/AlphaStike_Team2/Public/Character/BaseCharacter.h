@@ -15,11 +15,10 @@ UCLASS()
 class ALPHASTIKE_TEAM2_API ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
-private:
-	
-
 public:
 	ABaseCharacter();
+private:
+	void UpdateCameraOffset();
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,13 +43,26 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> L_Hand{ nullptr };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Robot Settings")
+	float HandsRotationAngle{50.f};
+
+	UPROPERTY(VisibleAnywhere, Category = "HUD")
+	TObjectPtr<class UWidgetComponent> HealthBarWidgetComponent{ nullptr };
+
+	UPROPERTY(EditAnywhere, Category = "HUD")
+	TSubclassOf<class UHealthBarWidget> HealthBarWidgetClass;
 	
 public:	
+	UPROPERTY(EditAnywhere, Category = "Game Settings")
+	bool CameraWalkShake{true};
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void RotateBody();
 	void RotateHands(float LookAtTarget);
+	void InitializeHealthBar();
 	bool HandsRotationInRange(const float& LookAtTarget);
 };
