@@ -4,6 +4,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WeaponComponent.h"
+#include "Components/HealthComponent.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -13,6 +14,7 @@ ABaseCharacter::ABaseCharacter()
 	
 
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
 	MeshBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Body"));
 	MeshBody->SetupAttachment(GetMesh());

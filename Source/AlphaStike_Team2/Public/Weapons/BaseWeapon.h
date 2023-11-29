@@ -68,6 +68,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	FName RightHandMuzzleSocketName = "RightHandMuzzle";
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	float Spread = 2.f;
+
 	int32 HandIndex = 0;
 private:
 

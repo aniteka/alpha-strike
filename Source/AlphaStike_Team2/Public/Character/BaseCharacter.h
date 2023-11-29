@@ -9,6 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class UWeaponComponent;
+class UHealthComponent;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API ABaseCharacter : public ACharacter
@@ -30,7 +31,10 @@ protected:
 	USpringArmComponent* ArmComponent;	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	UWeaponComponent* WeaponComponent;
+	UWeaponComponent* WeaponComponent;	
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> MeshBody{ nullptr };

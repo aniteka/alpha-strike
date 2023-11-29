@@ -13,7 +13,7 @@ void ARobotHandWeapon::BeginPlay()
 
 void ARobotHandWeapon::StartFire()
 {
-	GetWorldTimerManager().SetTimer(StartFireTimerHandle, this, &ARobotHandWeapon::Shot, 0.1f, true);
+	GetWorldTimerManager().SetTimer(StartFireTimerHandle, this, &ARobotHandWeapon::Shot, ShotRate, true,0.0f);
 }
 
 
