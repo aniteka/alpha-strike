@@ -18,6 +18,8 @@ ABaseCharacter::ABaseCharacter()
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 	HealthBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar Widget Component"));
 	HealthBarWidgetComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	HealthBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	HealthBarWidgetComponent->SetDrawSize(FVector2D(200, 18));
 
 	MeshBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Body"));
 	MeshBody->SetupAttachment(GetMesh());
@@ -46,7 +48,16 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeHealthBar();
+	
+	if (!IsPlayerControlled())
+	{
+		InitializeHealthBar();
+	}
+	else
+	{	
+		Tags.Add(FName("Player"));		
+	}
+	HealthBarWidgetComponent->SetVisibility(false);
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
@@ -55,6 +66,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 	RotateBody();
 	UpdateCameraOffset();
+	UpdateHealthBarVisibility();
 }
 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -91,8 +103,7 @@ void ABaseCharacter::RotateHands(float LookAtTarget)
 }
 
 void ABaseCharacter::InitializeHealthBar()
-{	
-	UE_LOG(LogTemp, Warning, TEXT("Start initialize Widget from Character"));
+{		
 	if (HealthBarWidgetClass == nullptr || HealthBarWidgetComponent == nullptr)
 	{	
 		return;
@@ -102,6 +113,42 @@ void ABaseCharacter::InitializeHealthBar()
 	if (UHealthBarWidget* Health = Cast<UHealthBarWidget>(HealthBarWidgetComponent->GetWidget()))
 	{
 		Health->InitializeWidget(HealthComponent);
+	}
+}
+
+float ABaseCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (EventInstigator->ActorHasTag(FName("Player_Controller")) && !ActorHasTag(FName("Player")))
+	{
+		ShowHealthBarOnDamageTaken();
+	}
+	
+	return 0.0f;
+}
+
+void ABaseCharacter::ShowHealthBarOnDamageTaken()
+{
+	LastTimeDamageTaken = GetWorld()->GetTimeSeconds();
+	HealthBarWidgetComponent->SetVisibility(true);
+	TakenDamageRecently = true;
+}
+
+void ABaseCharacter::UpdateHealthBarVisibility()
+{
+	if (TakenDamageRecently)
+	{
+		float CurrentTime = GetWorld()->GetTimeSeconds();
+		if (CurrentTime - LastTimeDamageTaken >= TimeToShowHealthOnDamage)
+		{
+			TakenDamageRecently = false;
+			HealthBarWidgetComponent->SetVisibility(false);
+		}
+		else
+		{
+			HealthBarWidgetComponent->SetVisibility(true);
+		}
 	}
 }
 

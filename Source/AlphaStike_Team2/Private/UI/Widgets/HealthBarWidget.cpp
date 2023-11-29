@@ -8,12 +8,10 @@
 
 void UHealthBarWidget::InitializeWidget(UHealthComponent* HealthComp)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Start initialize Widget"));
 	if (!HealthComp)
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Finish initialize Widget"));
 	HealthComponent = HealthComp;
 	HealthComponent->OnHealthUpdate.AddUObject(this, &UHealthBarWidget::OnHealthUpdate);
 	OnHealthUpdate(HealthComponent->GetHealth());
@@ -24,7 +22,6 @@ void UHealthBarWidget::InitializeWidget(UHealthComponent* HealthComp)
 
 void UHealthBarWidget::OnHealthUpdate(float value)
 {	
-	UE_LOG(LogTemp, Warning, TEXT("Update Health"));
 	HealthBar->SetPercent(value / HealthComponent->GetMaxHealth());
 	FText TheFloatText = FText::AsNumber(HealthComponent->GetHealth());
 	CurrentHealthLabel->SetText(TheFloatText);

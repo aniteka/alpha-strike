@@ -28,7 +28,6 @@ void ABaseWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentAmmoData = DefaultAmmoData;
-	
 }
 
 void ABaseWeapon::DecreaseAmmo()

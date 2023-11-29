@@ -22,6 +22,7 @@ void ABaseCharacterController::OnPossess(APawn* aPawn)
 	bShowMouseCursor = false;
 
 	BaseCharacter = Cast<ABaseCharacter>(GetPawn());
+	Tags.Add(FName("Player_Controller"));
 }
 
 void ABaseCharacterController::SetupInputComponent()

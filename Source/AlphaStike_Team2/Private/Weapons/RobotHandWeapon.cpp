@@ -27,7 +27,6 @@ void ARobotHandWeapon::Shot()
 	if (IsAmmoEmpty()) {
 		return;
 	}
-
 	const auto Player = Cast<ABaseCharacter>(GetOwner());
 	if (!Player) {
 		return;
@@ -51,6 +50,8 @@ void ARobotHandWeapon::Shot()
 
 	HandIndex = (HandIndex + 1) % 2;
 
+	DecreaseAmmo();
+
 	if (HitResult.bBlockingHit) {
 		const auto OtherPlayer = HitResult.GetActor();
 
@@ -61,7 +62,4 @@ void ARobotHandWeapon::Shot()
 		OtherPlayer->TakeDamage(AmountOfDamage, FDamageEvent{}, Player->GetController(), this);
 
 	}
-
-
-	DecreaseAmmo();
 }

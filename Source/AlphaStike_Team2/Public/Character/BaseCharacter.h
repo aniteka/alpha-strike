@@ -17,11 +17,12 @@ class ALPHASTIKE_TEAM2_API ABaseCharacter : public ACharacter
 	GENERATED_BODY()
 public:
 	ABaseCharacter();
-private:
-	void UpdateCameraOffset();
 
 protected:
 	virtual void BeginPlay() override;
+
+	void ShowHealthBarOnDamageTaken();
+	void UpdateHealthBarVisibility();
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Component")
 	UCameraComponent* CameraComponent;
@@ -52,7 +53,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "HUD")
 	TSubclassOf<class UHealthBarWidget> HealthBarWidgetClass;
-	
+
+	UPROPERTY(EditAnywhere, Category = "HUD")
+	float TimeToShowHealthOnDamage{ 3.f };
+	float LastTimeDamageTaken{ 0.f };
+
+private:
+	void UpdateCameraOffset();
+
+	bool TakenDamageRecently = false;
 public:	
 	UPROPERTY(EditAnywhere, Category = "Game Settings")
 	bool CameraWalkShake{true};
@@ -60,6 +69,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 
 	void RotateBody();
 	void RotateHands(float LookAtTarget);
