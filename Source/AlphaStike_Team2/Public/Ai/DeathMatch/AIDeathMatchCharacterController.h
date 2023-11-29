@@ -26,15 +26,25 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void UpdateControlRotation(float DeltaTime, bool bUpdatePawn) override;
+	
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
-		UAIPerceptionComponent* BasePerceptionComponent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
-		UAIRouteManagerComponent* RouteManagerComponent;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
-		UAIHostileManagerComponent* HostileManagerComponent;
-		
-	UPROPERTY(EditAnywhere, Category = "Ai")
-		UBehaviorTree* MainBehaviorTree;
+	UAIPerceptionComponent* BasePerceptionComponent;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
+	UAIRouteManagerComponent* RouteManagerComponent;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Components")
+	UAIHostileManagerComponent* HostileManagerComponent;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Ai")
+	UBehaviorTree* MainBehaviorTree;
+
+	UPROPERTY(EditAnywhere, Category = "Smooth")
+	float SmoothFocusInterpSpeed = 30.f;
+
+private:
+	FRotator SmoothTargetRotation;
 };

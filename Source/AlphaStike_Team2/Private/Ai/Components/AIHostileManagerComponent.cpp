@@ -19,8 +19,9 @@ void UAIHostileManagerComponent::BeginPlay()
 
 	const auto Controller = GetOwner<AAIController>();
 	check(Controller && Controller->GetPerceptionComponent());
-	
+
 	Controller->GetPerceptionComponent()->OnTargetPerceptionInfoUpdated.AddDynamic(this, &UAIHostileManagerComponent::OnPerceptionUpdatedCallback);
+	Controller->GetPerceptionComponent()->OnTargetPerceptionForgotten.AddDynamic(this, &UAIHostileManagerComponent::OnPerceptionForgottenCallback);
 }
 
 void UAIHostileManagerComponent::SetHostile(const TSoftObjectPtr<ACharacter>& NewHostile)
@@ -37,22 +38,31 @@ ACharacter* UAIHostileManagerComponent::TryToFindClosestHostile() const
 	check(Controller && PercComp && Controller->GetPawn());
 
 	TArray<AActor*> HostileCharacters;
-	PercComp->GetHostileActorsBySense(UAISense_Sight::StaticClass(), HostileCharacters);
-
+	PercComp->GetCurrentlyPerceivedActors(nullptr, HostileCharacters);
+	
 	float Dist;
 	return Cast<ACharacter>(UGameplayStatics::FindNearestActor(Controller->GetPawn()->GetActorLocation(), HostileCharacters, Dist));
 }
 
 void UAIHostileManagerComponent::OnPerceptionUpdatedCallback(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
-	if(UpdateInfo.Stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
-	{
-		if(UpdateInfo.Target.IsValid() && UpdateInfo.Stimulus.WasSuccessfullySensed())
-			SetHostile(UpdateInfo.Target.Get());
-		else
-		{
-			const auto OtherHostile = TryToFindClosestHostile();
-			SetHostile(OtherHostile);
-		}
-	}
+	if(!UpdateInfo.Target.IsValid())
+		return;
+
+	if(!GetHostile() && UpdateInfo.Stimulus.WasSuccessfullySensed())
+		SetHostile(UpdateInfo.Target.Get());
+}
+
+void UAIHostileManagerComponent::OnPerceptionForgottenCallback(AActor* Actor)
+{
+	if(!Actor || !GetHostile() || GetHostile() != Actor)
+		return;
+
+	const auto Controller = GetOwner<AAIController>();
+	const auto PercComp = Controller->GetPerceptionComponent();
+	check(Controller && PercComp);
+	
+	const auto Info = PercComp->GetActorInfo(*Actor);
+	if(!Info || !Info->HasAnyKnownStimulus())
+		SetHostile(TryToFindClosestHostile());
 }

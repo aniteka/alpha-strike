@@ -42,5 +42,6 @@ private:
 
 	UFUNCTION()
 	void OnPerceptionUpdatedCallback(const FActorPerceptionUpdateInfo& UpdateInfo);
-
+	UFUNCTION()
+	void OnPerceptionForgottenCallback(AActor* Actor);
 };
