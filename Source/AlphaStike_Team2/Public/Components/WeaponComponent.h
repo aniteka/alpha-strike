@@ -31,7 +31,7 @@ protected:
 	TArray<TSubclassOf<ABaseWeapon>> WeaponClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	FName WeaponSocketName = "LeftHandMuzzle";
+	FName WeaponSocketName = "BagSocket";
 
 private:
 	TArray<ABaseWeapon*> Weapons;

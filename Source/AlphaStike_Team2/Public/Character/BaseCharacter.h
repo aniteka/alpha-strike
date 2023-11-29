@@ -20,6 +20,14 @@ public:
 private:
 	void UpdateCameraOffset();
 
+	inline const UStaticMeshComponent* GetRightHandMesh() const {
+		return R_Hand;
+	}
+
+	inline const UStaticMeshComponent* GetLeftHandMesh() const {
+		return L_Hand;
+	}
+
 protected:
 	virtual void BeginPlay() override;
 
