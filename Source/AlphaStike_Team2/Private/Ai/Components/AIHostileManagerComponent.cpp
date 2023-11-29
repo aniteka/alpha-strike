@@ -19,8 +19,9 @@ void UAIHostileManagerComponent::BeginPlay()
 
 	const auto Controller = GetOwner<AAIController>();
 	check(Controller && Controller->GetPerceptionComponent());
-	
+
 	Controller->GetPerceptionComponent()->OnTargetPerceptionInfoUpdated.AddDynamic(this, &UAIHostileManagerComponent::OnPerceptionUpdatedCallback);
+	Controller->GetPerceptionComponent()->OnTargetPerceptionForgotten.AddDynamic(this, &UAIHostileManagerComponent::OnPerceptionForgottenCallback);
 }
 
 void UAIHostileManagerComponent::SetHostile(const TSoftObjectPtr<ACharacter>& NewHostile)
@@ -39,7 +40,6 @@ ACharacter* UAIHostileManagerComponent::TryToFindClosestHostile() const
 	TArray<AActor*> HostileCharacters;
 	PercComp->GetCurrentlyPerceivedActors(nullptr, HostileCharacters);
 	
-	
 	float Dist;
 	return Cast<ACharacter>(UGameplayStatics::FindNearestActor(Controller->GetPawn()->GetActorLocation(), HostileCharacters, Dist));
 }
@@ -51,7 +51,18 @@ void UAIHostileManagerComponent::OnPerceptionUpdatedCallback(const FActorPercept
 
 	if(!GetHostile() && UpdateInfo.Stimulus.WasSuccessfullySensed())
 		SetHostile(UpdateInfo.Target.Get());
+}
 
-	if(GetHostile() && GetHostile() == UpdateInfo.Target.Get() && !UpdateInfo.Stimulus.WasSuccessfullySensed())
+void UAIHostileManagerComponent::OnPerceptionForgottenCallback(AActor* Actor)
+{
+	if(!Actor || !GetHostile() || GetHostile() != Actor)
+		return;
+
+	const auto Controller = GetOwner<AAIController>();
+	const auto PercComp = Controller->GetPerceptionComponent();
+	check(Controller && PercComp);
+	
+	const auto Info = PercComp->GetActorInfo(*Actor);
+	if(!Info || !Info->HasAnyKnownStimulus())
 		SetHostile(TryToFindClosestHostile());
 }
