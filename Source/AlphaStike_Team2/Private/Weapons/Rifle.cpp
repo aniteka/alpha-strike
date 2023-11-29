@@ -30,8 +30,8 @@ void ARifle::Shot()
 		return;
 	}
 
-	const auto LeftHandMuzzleLocation = Player->GetMesh()->GetSocketLocation(LeftHandMuzzleSocketName);
-	const auto RightHandMuzzleLocation = Player->GetMesh()->GetSocketLocation(RightHandMuzzleSocketName);
+	const auto LeftHandMuzzleLocation = Player->GetLeftHandMesh()->GetSocketLocation(LeftHandMuzzleSocketName);
+	const auto RightHandMuzzleLocation = Player->GetRightHandMesh()->GetSocketLocation(RightHandMuzzleSocketName);
 
 	FHitResult HitResult;
 

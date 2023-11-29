@@ -39,8 +39,8 @@ void ARobotHandWeapon::Shot()
 		return;
 	}
 
-	const auto LeftHandMuzzle = Player->GetMesh()->GetSocketLocation(LeftHandMuzzleSocketName);
-	const auto RightHandMuzzle = Player->GetMesh()->GetSocketLocation(RightHandMuzzleSocketName);
+	const auto LeftHandMuzzle = Player->GetLeftHandMesh()->GetSocketLocation(LeftHandMuzzleSocketName);
+	const auto RightHandMuzzle = Player->GetRightHandMesh()->GetSocketLocation(RightHandMuzzleSocketName);
 
 	FHitResult HitResult;
 

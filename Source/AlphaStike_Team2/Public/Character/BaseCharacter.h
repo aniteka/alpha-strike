@@ -18,6 +18,14 @@ class ALPHASTIKE_TEAM2_API ABaseCharacter : public ACharacter
 public:
 	ABaseCharacter();
 
+	inline const UStaticMeshComponent* GetRightHandMesh() const {
+		return R_Hand;
+	}
+
+	inline const UStaticMeshComponent* GetLeftHandMesh() const {
+		return L_Hand;
+	}
+
 protected:
 	virtual void BeginPlay() override;
 
