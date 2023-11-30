@@ -45,6 +45,17 @@ void UWeaponComponent::SwitchWeapon()
 	}
 }
 
+bool UWeaponComponent::TryToGetCurrentAmmoData(FAmmoData& AmmoData) const
+{
+	if (!CurrentWeapon) {
+		return false;
+	}
+	
+	AmmoData = CurrentWeapon->GetAmmoData();
+
+	return true;
+}
+
 
 void UWeaponComponent::BeginPlay()
 {

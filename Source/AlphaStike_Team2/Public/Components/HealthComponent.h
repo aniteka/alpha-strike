@@ -25,6 +25,7 @@ public:
 
 	inline float GetHealth() const { return Health; }
 	inline float GetMaxHealth() const { return MaxHealth; }
+	inline float GetHealtPercent()const { return Health / MaxHealth; }
 
 protected:
 	// Called when the game starts

@@ -20,6 +20,9 @@ struct FAmmoData {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	int32 BulletsNum = 15;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UTexture2D* WeaponIcon;
 };
 
 UCLASS()
@@ -39,6 +42,10 @@ public:
 		return CurrentAmmoData.BulletsNum < DefaultAmmoData.BulletsNum && CurrentAmmoData.ClipNum >0;
 	}
 
+	inline FAmmoData GetAmmoData()const {
+		return CurrentAmmoData;
+	}
+
 	FOnClipEmpty OnClipEmpty;
 
 protected:
@@ -51,7 +58,7 @@ protected:
 		return !CurrentAmmoData.Infinite && CurrentAmmoData.BulletsNum == 0 && CurrentAmmoData.ClipNum == 0;
 	}
 
-	bool CalculateTrace(FVector& StartPoint, FVector& EndPoint)const;
+	bool CalculateTrace(FVector& EndPoint)const;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Ammo")
 	FAmmoData DefaultAmmoData;

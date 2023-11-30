@@ -33,17 +33,16 @@ void AAutoRifle::Shot()
 		return;
 	}
 
-	FVector StartPoint;
 	FVector EndPoint;
 
-	if (!CalculateTrace(StartPoint, EndPoint)) {
+	if (!CalculateTrace(EndPoint)) {
 		return;
 	}
 
 	FHitResult HitResult;
 
 	DrawDebugLine(GetWorld(), WeaponMesh->GetSocketLocation(MuzzleSocketName), EndPoint, FColor::Red, false, 3.f, 0, 3.f);
-	GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECollisionChannel::ECC_Visibility);
+	GetWorld()->LineTraceSingleByChannel(HitResult, WeaponMesh->GetSocketLocation(MuzzleSocketName), EndPoint, ECollisionChannel::ECC_Visibility);
 	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.f, 24, FColor::Red, false, 3.f, 0, 3.f);
 
 	if (HitResult.bBlockingHit) {

@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapons/BaseWeapon.h"
 #include "InputActionValue.h"
 #include "WeaponComponent.generated.h"
-
-class ABaseWeapon;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ALPHASTIKE_TEAM2_API UWeaponComponent : public UActorComponent
@@ -21,6 +20,7 @@ public:
 	void StopFire();
 	void Reload();
 	void SwitchWeapon();
+	bool TryToGetCurrentAmmoData(FAmmoData& AmmoData)const;
 
 	ABaseWeapon* GetCurrentWeapon() const { return CurrentWeapon; }
 	

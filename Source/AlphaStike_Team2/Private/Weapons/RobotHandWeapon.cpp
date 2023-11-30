@@ -32,10 +32,9 @@ void ARobotHandWeapon::Shot()
 		return;
 	}
 
-	FVector StartPoint;
 	FVector EndPoint;
 
-	if (!CalculateTrace(StartPoint, EndPoint)) {
+	if (!CalculateTrace(EndPoint)) {
 		return;
 	}
 
@@ -44,12 +43,11 @@ void ARobotHandWeapon::Shot()
 
 	FHitResult HitResult;
 
-	GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECollisionChannel::ECC_Visibility);
+	GetWorld()->LineTraceSingleByChannel(HitResult, HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, ECollisionChannel::ECC_Visibility);
 	DrawDebugLine(GetWorld(), HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, FColor::Red, false, 3.f, 0, 3.f);
 	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.f, 24, FColor::Red, false, 3.f, 0, 3.f);
 
 	HandIndex = (HandIndex + 1) % 2;
-
 	DecreaseAmmo();
 
 	if (HitResult.bBlockingHit) {

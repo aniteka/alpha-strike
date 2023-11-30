@@ -40,7 +40,7 @@ void ABaseWeapon::DecreaseAmmo()
 	}
 }
 
-bool ABaseWeapon::CalculateTrace(FVector& StartPoint, FVector& EndPoint) const
+bool ABaseWeapon::CalculateTrace(FVector& EndPoint) const
 {
 
 	const auto Player = Cast<ABaseCharacter>(GetOwner());
@@ -58,7 +58,7 @@ bool ABaseWeapon::CalculateTrace(FVector& StartPoint, FVector& EndPoint) const
 
 	Controller->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
-	StartPoint = CameraLocation;
+	FVector StartPoint = CameraLocation;
 	const auto Rad = FMath::DegreesToRadians(Spread);
 	const auto Direction = FMath::VRandCone(CameraRotation.Vector(),Rad);
 	EndPoint = StartPoint + Direction * ShotDistance;

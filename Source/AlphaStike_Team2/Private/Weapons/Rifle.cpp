@@ -23,10 +23,9 @@ void ARifle::Shot()
 		return;
 	}
 
-	FVector StartPoint;
 	FVector EndPoint;
 
-	if (!CalculateTrace(StartPoint, EndPoint)) {
+	if (!CalculateTrace(EndPoint)) {
 		return;
 	}
 
