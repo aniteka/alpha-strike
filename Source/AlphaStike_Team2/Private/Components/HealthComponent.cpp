@@ -3,6 +3,7 @@
 
 #include "Components/HealthComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Perception/AISense_Damage.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -26,6 +27,12 @@ void UHealthComponent::DamageTaken(AActor* DamageActor, float Damage, const UDam
 	{
 		HandleDestroy(DamageActor);
 	}
+
+	// For AIPerception
+	if(const auto DamagedPawn = Cast<APawn>(DamageActor); DamagedPawn && DamagedPawn->GetController() && Instigator->GetPawn())
+		UAISense_Damage::ReportDamageEvent(GetWorld(), DamagedPawn->GetController(), Instigator->GetPawn(), Damage,
+		                                   Instigator->GetPawn()->GetActorLocation(),
+		                                   DamageActor->GetActorLocation());
 }
 
 void UHealthComponent::HandleDestroy(AActor* DamageActor)
