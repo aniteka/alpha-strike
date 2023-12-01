@@ -75,6 +75,11 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
+void ABaseCharacter::InitTeamsVisualSigns(UMaterial* Material)
+{
+	MeshBody->SetMaterial(1, Material);
+}
+
 void ABaseCharacter::RotateBody()
 {
 	FRotator BodyRotation = { 0.f, GetControlRotation().Yaw -90, 0.f}; // -90 this is the difference in angle due to the incorrect positioning of the model in Blender.

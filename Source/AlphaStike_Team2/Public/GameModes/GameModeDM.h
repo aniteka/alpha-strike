@@ -43,6 +43,9 @@ struct FTeamInfo
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSoftObjectPtr<AAIRoute>> Routes;
+
+	UPROPERTY(EditAnywhere)
+	UMaterial* TeamMaterial;
 };
 
 UCLASS()
@@ -77,7 +80,9 @@ private:
 	void InitPlayerTeamType();
 	
 	AController* SpawnPlayerInsteadOfBot();
-	
+
+	void InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial);
+
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);
 	ACharacter* SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const;

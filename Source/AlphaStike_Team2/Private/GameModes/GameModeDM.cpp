@@ -32,6 +32,7 @@ void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 	const auto PlayerController = SpawnPlayerInsteadOfBot();
 	if(const auto TeamAgent = Cast<IGenericTeamAgentInterface>(PlayerController))
 		TeamAgent->SetGenericTeamId({static_cast<uint8>(GetPlayerTeamType())});
+	InitTeamsVisualSignsForCharacter(PlayerController->GetCharacter(), TeamInfos[PlayerTeamType].TeamMaterial);
 	
 	SpawnAllTeams();
 }
@@ -72,6 +73,12 @@ AController* AGameModeDM::SpawnPlayerInsteadOfBot()
 	return GetWorld()->GetFirstPlayerController();
 }
 
+void AGameModeDM::InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial)
+{
+	if(const auto BaseCharacter = Cast<ABaseCharacter>(Character))
+		BaseCharacter->InitTeamsVisualSigns(TeamMaterial);
+}
+
 void AGameModeDM::SpawnAllTeams()
 {
 	for (const auto& TeamInfo : TeamInfos)
@@ -86,6 +93,7 @@ void AGameModeDM::SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type)
 			const auto Bot = SpawnBotByInfo(BotInfo);
 			if(const auto TeamAgent = Bot->GetController<IGenericTeamAgentInterface>())
 				TeamAgent->SetGenericTeamId({static_cast<uint8>(Type)});
+			InitTeamsVisualSignsForCharacter(Bot, TeamInfos[Type].TeamMaterial);
 		}
 }
 
