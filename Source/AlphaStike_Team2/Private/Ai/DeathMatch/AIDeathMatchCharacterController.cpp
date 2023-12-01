@@ -3,8 +3,11 @@
 
 #include "Ai/DeathMatch/AIDeathMatchCharacterController.h"
 
+#include "BrainComponent.h"
 #include "Ai/Components/AIHostileManagerComponent.h"
 #include "Ai/Components/AIRouteManagerComponent.h"
+#include "Character/BaseCharacter.h"
+#include "Components/HealthComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISense_Sight.h"
@@ -26,18 +29,22 @@ void AAIDeathMatchCharacterController::OnPossess(APawn* InPawn)
 	Super::OnPossess(InPawn);
 
 	RunBehaviorTree(MainBehaviorTree);
+
+	const auto HpComp = InPawn->GetComponentByClass<UHealthComponent>();
+	check(HpComp);
+	HpComp->OnDeathDelegate.AddUObject(this, &AAIDeathMatchCharacterController::OnDeathCallback);
 }
 
-ETeamAttitude::Type AAIDeathMatchCharacterController::GetTeamAttitudeTowards(const AActor& Other) const
+void AAIDeathMatchCharacterController::PawnPendingDestroy(APawn* inPawn)
 {
-	if (const APawn* OtherPawn = Cast<APawn>(&Other))
+	if(!bWillRespawn)
 	{
-		if (const IGenericTeamAgentInterface* TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController()))
-		{
-			return Super::GetTeamAttitudeTowards(*OtherPawn->GetController());
-		}
+		Super::PawnPendingDestroy(inPawn);
+		return;
 	}
-	return Super::GetTeamAttitudeTowards(Other);
+	UnPossess();
+	bWillRespawn = false;
+	RespawnBot();
 }
 
 void AAIDeathMatchCharacterController::Tick(float DeltaTime)
@@ -60,4 +67,36 @@ void AAIDeathMatchCharacterController::UpdateControlRotation(float DeltaTime, bo
 			MyPawn->FaceRotation(SmoothTargetRotation, DeltaTime);
 		}
 	}
+}
+
+ETeamAttitude::Type AAIDeathMatchCharacterController::GetTeamAttitudeTowards(const AActor& Other) const
+{
+	if (const APawn* OtherPawn = Cast<APawn>(&Other))
+	{
+		if (const IGenericTeamAgentInterface* TeamAgent = Cast<IGenericTeamAgentInterface>(OtherPawn->GetController()))
+		{
+			return Super::GetTeamAttitudeTowards(*OtherPawn->GetController());
+		}
+	}
+	return Super::GetTeamAttitudeTowards(Other);
+}
+
+void AAIDeathMatchCharacterController::RespawnBot()
+{
+	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	check(GameModeDM);
+	const auto BaseCharacter = Cast<ABaseCharacter>(GameModeDM->SpawnBotByInfoWithController(GetSpawnInfo(), this));
+	if(!BaseCharacter)
+		return;
+
+	BaseCharacter->InitTeamsVisualSigns(GameModeDM->GetMaterialForTeam(static_cast<ETeamType>(GetGenericTeamId().GetId())));
+	RouteManagerComponent->TryGetRouteFromGM();
+	GetBrainComponent()->RestartLogic();
+}
+
+void AAIDeathMatchCharacterController::OnDeathCallback(AController* Damaged, AController* Causer)
+{
+	GetPawn()->SetLifeSpan(5.0);
+	GetBrainComponent()->StopLogic("Death");
+	bWillRespawn = true;
 }

@@ -63,7 +63,13 @@ public:
 	int32 GetPlayerSpawnIndex() const { return PlayerSpawnIndex; }
 
 	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
-	
+
+	AController* SpawnPlayerInsteadOfBot();
+	ACharacter* SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const;
+	ACharacter* SpawnBotByInfoWithController(const FBotSpawnInfo& SpawnInfo, AController* Controller);
+
+	UMaterial* GetMaterialForTeam(ETeamType Type);
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Spawn")
 	TMap<ETeamType, FTeamInfo> TeamInfos;
@@ -79,11 +85,9 @@ private:
 	void InitPlayerSpawnIndex();
 	void InitPlayerTeamType();
 	
-	AController* SpawnPlayerInsteadOfBot();
 
 	void InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial);
 
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);
-	ACharacter* SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const;
 };
