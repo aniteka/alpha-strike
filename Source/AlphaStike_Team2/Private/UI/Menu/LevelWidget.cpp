@@ -19,10 +19,6 @@ void ULevelWidget::SetupLevel(const FLevelData& Data)
 		LevelName->SetText(FText::FromName(LevelData.LevelName));
 	}
 
-	if (LevelDescription) {
-		LevelDescription->SetText(FText::FromName(LevelData.LevelDescription));
-	}
-
 }
 
 void ULevelWidget::NativeOnInitialized()

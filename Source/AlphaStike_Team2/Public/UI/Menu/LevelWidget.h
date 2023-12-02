@@ -35,9 +35,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* LevelName;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* LevelDescription;
-
 private:
 	UFUNCTION()
 	void OnSelectLevelButtonClicked();

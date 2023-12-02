@@ -3,18 +3,18 @@
 #include "Components/WeaponComponent.h"
 #include "Weapons/BaseWeapon.h"
 #include "Character/BaseCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 
 UWeaponComponent::UWeaponComponent()
 {
-
 	PrimaryComponentTick.bCanEverTick = false;
-
-
 }
 
 void UWeaponComponent::StartFire()
 {
-	if (CurrentWeapon) {
+	if (CurrentWeapon && CanFire()) {
 		UE_LOG(LogTemp, Display, TEXT("StartFire"));
 		CurrentWeapon->StartFire();
 	}
@@ -32,13 +32,30 @@ void UWeaponComponent::Reload()
 {
 	if (CurrentWeapon && CanReload()) {
 		UE_LOG(LogTemp, Display, TEXT("Reload"));
-		CurrentWeapon->Reload();
+
+		const auto Player = Cast<ABaseCharacter>(GetOwner());
+		if (!Player) {
+			return;
+		}
+
+		UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAttached(ReloadSound, Player->GetMesh(), BagSocketName);
+		IsReloadSoundPlaying = true;
+
+		if (!AudioComponent) {
+			return;
+		}
+
+		AudioComponent->OnAudioFinishedNative.AddLambda([&](UAudioComponent* AudioComponent) {
+			IsReloadSoundPlaying = false;
+			CurrentWeapon->Reload();
+		});
+
 	}
 }
 
 void UWeaponComponent::SwitchWeapon()
 {
-	if (Weapons.Num() > 1) {
+	if (CasSwitchWeapon()) {
 		UE_LOG(LogTemp, Display, TEXT("SwitchWeapon"));
 		WeaponIndex = (WeaponIndex + 1) % Weapons.Num();
 		TakeWeapon();
@@ -50,7 +67,7 @@ bool UWeaponComponent::TryToGetCurrentAmmoData(FAmmoData& AmmoData) const
 	if (!CurrentWeapon) {
 		return false;
 	}
-	
+
 	AmmoData = CurrentWeapon->GetAmmoData();
 
 	return true;
@@ -87,15 +104,10 @@ void UWeaponComponent::CreateWeapon()
 
 		CurWeapon->SetOwner(Player);
 		CurWeapon->OnClipEmpty.AddUObject(this, &UWeaponComponent::Reload);
-		CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false), WeaponSocketName);
-	
-		Weapons.Add(CurWeapon); 
-	}	
-}
+		CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false), BagSocketName);
 
-bool UWeaponComponent::CanReload() const
-{
-	return CurrentWeapon->CanReload();
+		Weapons.Add(CurWeapon);
+	}
 }
 
 void UWeaponComponent::TakeWeapon()

@@ -4,6 +4,9 @@
 #include "Weapons/RobotHandWeapon.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void ARobotHandWeapon::BeginPlay()
@@ -13,20 +16,40 @@ void ARobotHandWeapon::BeginPlay()
 
 void ARobotHandWeapon::StartFire()
 {
+	SpawnFX();
 	GetWorldTimerManager().SetTimer(StartFireTimerHandle, this, &ARobotHandWeapon::Shot, ShotRate, true,0.0f);
 }
 
 
 void ARobotHandWeapon::StopFire()
 {
+	ActiveFX(false);
 	GetWorldTimerManager().ClearTimer(StartFireTimerHandle);
+}
+
+void ARobotHandWeapon::SpawnFX()
+{
+	if (!FireAudioComponent) {
+		const auto Player = Cast<ABaseCharacter>(GetOwner());
+
+		if (!Player) {
+			return;
+		}
+
+		FireAudioComponent = UGameplayStatics::SpawnSoundAttached(FireSound, Player->GetLeftHandMesh(),LeftHandMuzzleSocketName);
+	}
+
+	ActiveFX(true);
+
 }
 
 void ARobotHandWeapon::Shot()
 {
-	if (IsAmmoEmpty()) {
+	if (IsClipEmpty()) {
+		StopFire();
 		return;
 	}
+
 	const auto Player = Cast<ABaseCharacter>(GetOwner());
 	if (!Player) {
 		return;
@@ -59,5 +82,12 @@ void ARobotHandWeapon::Shot()
 
 		OtherPlayer->TakeDamage(AmountOfDamage, FDamageEvent{}, Player->GetController(), this);
 
+	}
+}
+
+void ARobotHandWeapon::ActiveFX(bool IsActive)
+{
+	if (FireAudioComponent) {
+		FireAudioComponent->SetPaused(!IsActive);
 	}
 }

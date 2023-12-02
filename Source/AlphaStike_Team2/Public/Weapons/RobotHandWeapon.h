@@ -21,10 +21,15 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Shot")
 	float ShotRate = 0.1f;
 
+	void SpawnFX();
+
 private:
 
 	FTimerHandle StartFireTimerHandle;
 
+	UAudioComponent* FireAudioComponent;
+
 	void Shot();
+	void ActiveFX(bool IsActive);
 
 };

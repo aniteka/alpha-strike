@@ -8,6 +8,8 @@
 #include "InputActionValue.h"
 #include "WeaponComponent.generated.h"
 
+class USoundCue;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ALPHASTIKE_TEAM2_API UWeaponComponent : public UActorComponent
 {
@@ -31,7 +33,10 @@ protected:
 	TArray<TSubclassOf<ABaseWeapon>> WeaponClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	FName WeaponSocketName = "BagSocket";
+	FName BagSocketName = "BagSocket";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* ReloadSound;
 
 private:
 	TArray<ABaseWeapon*> Weapons;
@@ -40,7 +45,12 @@ private:
 
 	int32 WeaponIndex = 0;
 
+	bool IsReloadSoundPlaying = false;
+
 	void CreateWeapon();
-	bool CanReload()const;
+	inline bool CanReload()const{ return CurrentWeapon->CanReload() && !IsReloadSoundPlaying; }
+	inline bool CanFire()const { return CurrentWeapon && !IsReloadSoundPlaying; }
+	inline bool CasSwitchWeapon()const { return Weapons.Num() > 0 && !IsReloadSoundPlaying; }
+
 	void TakeWeapon();
 };

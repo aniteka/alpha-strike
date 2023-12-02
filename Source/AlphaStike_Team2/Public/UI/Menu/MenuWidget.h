@@ -9,6 +9,7 @@
 
 class UButton;
 class UVerticalBox;
+class UHorizontalBox;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API UMenuWidget : public UUserWidget
@@ -32,7 +33,7 @@ protected:
 	UWidgetAnimation* PreloaderAnimation;
 
 	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* LevelsVerticalBox;
+	UHorizontalBox* LevelsHorizontalBox;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* SelectLevelButton;

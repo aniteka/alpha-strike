@@ -20,9 +20,6 @@ struct FLevelData {
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Level")
 	FName LevelName = NAME_None;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level")
-	FName LevelDescription = NAME_None;
 };
 
 

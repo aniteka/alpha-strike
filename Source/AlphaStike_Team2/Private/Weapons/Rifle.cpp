@@ -14,7 +14,7 @@ void ARifle::StartFire()
 
 void ARifle::Shot()
 {
-	if (IsAmmoEmpty()) {
+	if (IsClipEmpty()) {
 		return;
 	}
 

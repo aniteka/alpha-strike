@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "BaseWeapon.generated.h"
 
+class USoundCue;
+
 DECLARE_MULTICAST_DELEGATE(FOnClipEmpty);
 
 USTRUCT(BlueprintType)
@@ -24,6 +26,8 @@ struct FAmmoData {
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	UTexture2D* WeaponIcon;
 };
+
+
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API ABaseWeapon : public AActor
@@ -58,6 +62,10 @@ protected:
 		return !CurrentAmmoData.Infinite && CurrentAmmoData.BulletsNum == 0 && CurrentAmmoData.ClipNum == 0;
 	}
 
+	inline bool IsClipEmpty()const {
+		return CurrentAmmoData.BulletsNum == 0;
+	}
+
 	bool CalculateTrace(FVector& EndPoint)const;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Ammo")
@@ -78,10 +86,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	float Spread = 2.f;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Sound")
+	USoundCue* FireSound;
+
 	int32 HandIndex = 0;
+
 private:
 
 	FAmmoData CurrentAmmoData;
-
 	
 };

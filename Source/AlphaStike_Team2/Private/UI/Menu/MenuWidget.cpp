@@ -5,7 +5,7 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Components/VerticalBox.h"
+#include "Components/HorizontalBox.h"
 #include "MainGameInstance.h"
 #include "UI/Menu/LevelWidget.h"
 
@@ -45,11 +45,11 @@ void UMenuWidget::CreateLevels()
 		return;
 	}
 
-	if (!LevelsVerticalBox) {
+	if (!LevelsHorizontalBox) {
 		return;
 	}
 
-	LevelsVerticalBox->ClearChildren();
+	LevelsHorizontalBox->ClearChildren();
 
 	for (auto Level : GameInstance->GetLevelsData()) {
 		auto CurrentLevel = CreateWidget<ULevelWidget>(GetWorld(), LevelWidgetClass);
@@ -60,7 +60,7 @@ void UMenuWidget::CreateLevels()
 
 		CurrentLevel->SetupLevel(Level);
 		CurrentLevel->OnLevelSelected.AddUObject(this, &UMenuWidget::SetupLevel);
-		LevelsVerticalBox->AddChild(CurrentLevel);
+		LevelsHorizontalBox->AddChild(CurrentLevel);
 	}
 }
 

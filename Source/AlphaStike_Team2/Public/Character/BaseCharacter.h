@@ -18,11 +18,11 @@ class ALPHASTIKE_TEAM2_API ABaseCharacter : public ACharacter
 public:
 	ABaseCharacter();
 
-	inline const UStaticMeshComponent* GetRightHandMesh() const {
+	inline UStaticMeshComponent* GetRightHandMesh() const {
 		return R_Hand;
 	}
 
-	inline const UStaticMeshComponent* GetLeftHandMesh() const {
+	inline UStaticMeshComponent* GetLeftHandMesh() const {
 		return L_Hand;
 	}
 
