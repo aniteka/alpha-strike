@@ -59,7 +59,12 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Robot Settings")
 	float HandsRotationAngle{50.f};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Robot Settings")
+	FVector DeathExplosionHeadImpulse = FVector::UpVector * 1000.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Robot Settings")
+	UParticleSystem* ExplosionParticle = nullptr;
 
+	
 	UPROPERTY(VisibleAnywhere, Category = "HUD")
 	TObjectPtr<class UWidgetComponent> HealthBarWidgetComponent{ nullptr };
 

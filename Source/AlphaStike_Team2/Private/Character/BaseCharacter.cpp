@@ -4,6 +4,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include <Kismet/GameplayStatics.h>
+
+#include "DelayAction.h"
 #include "UI/Widgets/HealthBarWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Components/WeaponComponent.h"
@@ -53,6 +55,19 @@ void ABaseCharacter::UpdateCameraOffset()
 void ABaseCharacter::OnDeathCallback(AController* Damaged, AController* Causer)
 {
 	PerceptionStimuliSourceComponent->UnregisterFromPerceptionSystem();
+	
+	const auto OldRotation = MeshBody->GetComponentRotation();
+	const auto OldLocation = MeshBody->GetComponentLocation();
+	MeshBody->SetAbsolute(true, true);
+	MeshBody->SetWorldRotation(OldRotation);
+	MeshBody->SetWorldLocation(OldLocation);
+	MeshBody->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	MeshBody->SetSimulatePhysics(true);
+
+	MeshBody->AddImpulse(DeathExplosionHeadImpulse);
+
+	if(ExplosionParticle)
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, GetTransform());
 }
 
 void ABaseCharacter::BeginPlay()

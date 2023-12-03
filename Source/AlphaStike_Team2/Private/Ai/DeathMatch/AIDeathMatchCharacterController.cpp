@@ -97,7 +97,7 @@ void AAIDeathMatchCharacterController::RespawnBot()
 
 void AAIDeathMatchCharacterController::OnDeathCallback(AController* Damaged, AController* Causer)
 {
-	if(GetPawn())
+	if(!GetPawn())
 		return;
 	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
 	check(GameModeDM);
