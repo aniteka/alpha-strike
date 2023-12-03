@@ -27,7 +27,9 @@ AAIDeathMatchCharacterController::AAIDeathMatchCharacterController()
 void AAIDeathMatchCharacterController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
+	if(!InPawn)
+		return;
+	
 	RunBehaviorTree(MainBehaviorTree);
 
 	const auto HpComp = InPawn->GetComponentByClass<UHealthComponent>();
@@ -37,7 +39,7 @@ void AAIDeathMatchCharacterController::OnPossess(APawn* InPawn)
 
 void AAIDeathMatchCharacterController::PawnPendingDestroy(APawn* inPawn)
 {
-	if(!bWillRespawn)
+	if(!bWillRespawn || inPawn->GetLifeSpan() != 0)
 	{
 		Super::PawnPendingDestroy(inPawn);
 		return;
