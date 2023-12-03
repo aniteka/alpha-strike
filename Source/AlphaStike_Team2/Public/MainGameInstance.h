@@ -36,9 +36,16 @@ public:
 		return Levels;
 	}
 
+	inline FName GetMenuLevelName()const {
+		return MenuLevelName;
+	}
+
 protected:
 	ETeamType PlayerTeamType = ETeamType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelData")
 	TArray<FLevelData> Levels;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelData")
+	FName MenuLevelName = "Menu";
 };

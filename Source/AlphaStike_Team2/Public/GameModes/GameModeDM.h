@@ -45,6 +45,15 @@ struct FTeamInfo
 	TArray<TSoftObjectPtr<AAIRoute>> Routes;
 };
 
+UENUM(BlueprintType)
+enum class EGameState : uint8 {
+	StartGame = 0,
+	InGame,
+	Pause
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStateChanged, EGameState);
+
 UCLASS()
 class ALPHASTIKE_TEAM2_API AGameModeDM : public AGameMode
 {
@@ -53,6 +62,7 @@ class ALPHASTIKE_TEAM2_API AGameModeDM : public AGameMode
 public:
 	AGameModeDM();
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+	virtual void StartPlay() override;
 
 	ETeamType GetPlayerTeamType() const { return PlayerTeamType; }
 	void SetPlayerTeamType(ETeamType NewPlayerTeamType) { PlayerTeamType = NewPlayerTeamType; }
@@ -60,6 +70,11 @@ public:
 	int32 GetPlayerSpawnIndex() const { return PlayerSpawnIndex; }
 
 	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
+
+	FOnGameStateChanged OnGameStateChanged;
+
+	virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause())override;
+	virtual bool ClearPause();
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Spawn")
@@ -81,4 +96,7 @@ private:
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);
 	ACharacter* SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const;
+	void SetNewGameState(EGameState NewState);
+
+	EGameState State;
 };

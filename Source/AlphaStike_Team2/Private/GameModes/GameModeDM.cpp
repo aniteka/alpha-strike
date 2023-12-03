@@ -36,11 +36,29 @@ void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 	SpawnAllTeams();
 }
 
+void AGameModeDM::StartPlay()
+{
+	Super::StartPlay();
+	SetNewGameState(EGameState::InGame);
+}
+
 TSoftObjectPtr<AAIRoute> AGameModeDM::GetRouteForTeam(ETeamType Type)
 {
 	if(Type == ETeamType::None || !TeamInfos.Find(Type) || TeamInfos[Type].Routes.Num() == 0)
 		return nullptr;
 	return TeamInfos[Type].Routes[FMath::RandRange(0, TeamInfos[Type].Routes.Num() - 1)];
+}
+
+bool AGameModeDM::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
+{
+	SetNewGameState(EGameState::Pause);
+	return Super::SetPause(PC,CanUnpauseDelegate);
+}
+
+bool AGameModeDM::ClearPause()
+{
+	SetNewGameState(EGameState::InGame);
+	return Super::ClearPause();
 }
 
 void AGameModeDM::InitPlayerSpawnIndex()
@@ -93,7 +111,6 @@ ACharacter* AGameModeDM::SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const
 {
 	if(!SpawnInfo.IsValid())
 	{
-		UE_LOG(LogTemp, Error, TEXT("SpawnInfo is not valid"));
 		return nullptr;
 	}
 
@@ -104,4 +121,14 @@ ACharacter* AGameModeDM::SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const
 	Bot->AIControllerClass = SpawnInfo.BotController.Get();
 	Bot->SpawnDefaultController();
 	return Bot;
+}
+
+void AGameModeDM::SetNewGameState(EGameState NewState)
+{
+	if (State == NewState) {
+		return;
+	}
+
+	State = NewState;
+	OnGameStateChanged.Broadcast(NewState);
 }

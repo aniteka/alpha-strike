@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "GameModes/GameModeDM.h"
 #include "PlayerHUD.generated.h"
 
 
@@ -18,5 +19,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> PlayerWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> PauseWidgetClass;
 
+	void OnGameStateChanged(EGameState NewState);
+
+private:
+
+	UUserWidget* CurrentWidget = nullptr;
+	TMap<EGameState, UUserWidget*> PlayerWidgets;
 };

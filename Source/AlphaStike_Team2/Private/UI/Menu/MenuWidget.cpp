@@ -25,6 +25,10 @@ void UMenuWidget::NativeOnInitialized()
 		SelectLevelButton->OnClicked.AddDynamic(this, &UMenuWidget::OnSelectLevel);
 	}
 
+	if (StartAnimation) {
+		PlayAnimation(StartAnimation);
+	}
+
 	InitializeFirstLevel();
 	CreateLevels();
 }

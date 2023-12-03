@@ -6,6 +6,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
+#include "GameModes/GameModeDM.h"
 #include "BaseCharacterController.generated.h"
 
 class UInputMappingContext;
@@ -18,6 +19,7 @@ class ALPHASTIKE_TEAM2_API ABaseCharacterController : public APlayerController, 
 	GENERATED_BODY()
 	
 protected:
+	virtual void BeginPlay()override;
 	virtual void OnPossess(APawn* aPawn) override;
 	virtual void SetupInputComponent() override;
 
@@ -30,6 +32,8 @@ protected:
 	void StopFire(const FInputActionValue& Value);
 	void Reload(const FInputActionValue& Value);
 	void SwitchWeapon(const FInputActionValue& Value);
+	void GamePause(const FInputActionValue& Value);
+	void OnGameStateChanged(EGameState NewState);
 
 public:
 
@@ -63,7 +67,10 @@ protected:
 	UInputAction* ReloadAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* SwitchWeaponAction;
+	UInputAction* SwitchWeaponAction;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* PauseAction;
 	
 private:
 	ABaseCharacter* BaseCharacter;

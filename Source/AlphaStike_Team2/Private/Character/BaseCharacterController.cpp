@@ -8,6 +8,20 @@
 #include "Components/WeaponComponent.h"
 
 
+
+void ABaseCharacterController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetWorld()) {
+		const auto GameMode = Cast<AGameModeDM>(GetWorld()->GetAuthGameMode());
+
+		if (GameMode) {
+			GameMode->OnGameStateChanged.AddUObject(this, &ABaseCharacterController::OnGameStateChanged);
+		}
+	}
+}
+
 void ABaseCharacterController::OnPossess(APawn* aPawn)
 {
 	Super::OnPossess(aPawn);
@@ -45,6 +59,7 @@ void ABaseCharacterController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAction(SwitchWeaponAction, ETriggerEvent::Started, this, &ABaseCharacterController::SwitchWeapon);
 
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ABaseCharacterController::GamePause);
 	}
 }
 
@@ -115,6 +130,33 @@ void ABaseCharacterController::SwitchWeapon(const FInputActionValue& Value)
 {
 	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->SwitchWeapon();
+	}
+}
+
+void ABaseCharacterController::GamePause(const FInputActionValue& Value)
+{
+	if (!GetWorld()) {
+		return;
+	}
+
+	auto GameMode = GetWorld()->GetAuthGameMode();
+
+	if (!GameMode) {
+		return;
+	}
+
+	GameMode->SetPause(this);
+}
+
+void ABaseCharacterController::OnGameStateChanged(EGameState NewState)
+{
+	if (NewState == EGameState::InGame) {
+		SetInputMode(FInputModeGameOnly());
+		bShowMouseCursor = false;
+	}
+	else {
+		SetInputMode(FInputModeUIOnly());
+		bShowMouseCursor = true;
 	}
 }
 

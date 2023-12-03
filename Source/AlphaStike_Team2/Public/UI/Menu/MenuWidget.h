@@ -32,14 +32,17 @@ protected:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* PreloaderAnimation;
 
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* StartAnimation;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* LevelsMenuAnimation;
+
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* LevelsHorizontalBox;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* SelectLevelButton;
-
-	UPROPERTY(meta = (BindWidgetAnim), Transient)
-	UWidgetAnimation* LevelsMenuAnimation;
 
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)override;
 
