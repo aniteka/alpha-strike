@@ -52,3 +52,17 @@ void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+void UHealthComponent::Heal(const float& Heal_amount)
+{
+	if (Health + Heal_amount > MaxHealth)
+	{
+		Health = MaxHealth;
+	}
+	else
+	{
+		Health += Heal_amount;
+	}
+	
+	OnHealthUpdate.Broadcast(Health);
+}
+

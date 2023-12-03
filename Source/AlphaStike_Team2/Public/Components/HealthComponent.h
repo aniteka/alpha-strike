@@ -34,6 +34,8 @@ protected:
 public:	
 	FOnHealthUpdate OnHealthUpdate;
 
+	void Heal(const float &Heal_amount);
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Health", meta = (AllowPrivateAccess = true))
 	float MaxHealth = 100.f;

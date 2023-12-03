@@ -26,6 +26,10 @@ public:
 		return L_Hand;
 	}
 
+	inline UHealthComponent* GetHealthComponent() const {
+		return HealthComponent;
+	}
+
 protected:
 	virtual void BeginPlay() override;
 
