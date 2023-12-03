@@ -87,18 +87,22 @@ void AAIDeathMatchCharacterController::RespawnBot()
 {
 	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
 	check(GameModeDM);
-	const auto BaseCharacter = Cast<ABaseCharacter>(GameModeDM->SpawnBotByInfoWithController(GetSpawnInfo(), this));
+	const auto BaseCharacter = Cast<ABaseCharacter>(GameModeDM->RespawnAndInitBotByController(this));
 	if(!BaseCharacter)
 		return;
 
-	BaseCharacter->InitTeamsVisualSigns(GameModeDM->GetMaterialForTeam(static_cast<ETeamType>(GetGenericTeamId().GetId())));
 	RouteManagerComponent->TryGetRouteFromGM();
 	GetBrainComponent()->RestartLogic();
 }
 
 void AAIDeathMatchCharacterController::OnDeathCallback(AController* Damaged, AController* Causer)
 {
-	GetPawn()->SetLifeSpan(5.0);
+	if(GetPawn())
+		return;
+	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	check(GameModeDM);
+	
+	GetPawn()->SetLifeSpan(GameModeDM->GetRespawnTime());
 	GetBrainComponent()->StopLogic("Death");
 	bWillRespawn = true;
 }

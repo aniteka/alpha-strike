@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+class UAIPerceptionStimuliSourceComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UWeaponComponent;
@@ -53,6 +54,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UStaticMeshComponent> L_Hand{ nullptr };
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+	UAIPerceptionStimuliSourceComponent* PerceptionStimuliSourceComponent;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Robot Settings")
 	float HandsRotationAngle{50.f};
 
@@ -69,6 +73,8 @@ protected:
 private:
 	void UpdateCameraOffset();
 
+	void OnDeathCallback(AController* Damaged, AController* Causer);
+	
 	bool TakenDamageRecently = false;
 public:	
 	UPROPERTY(EditAnywhere, Category = "Game Settings")

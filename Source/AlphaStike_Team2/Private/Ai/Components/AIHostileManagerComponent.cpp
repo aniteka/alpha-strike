@@ -46,7 +46,7 @@ ACharacter* UAIHostileManagerComponent::TryToFindClosestHostile() const
 
 void UAIHostileManagerComponent::OnPerceptionUpdatedCallback(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
-	if(!UpdateInfo.Target.IsValid())
+	if(!UpdateInfo.Target.IsValid() || !UpdateInfo.Target.Get()->IsA(ACharacter::StaticClass()))
 		return;
 
 	if(!GetHostile() && UpdateInfo.Stimulus.WasSuccessfullySensed())
