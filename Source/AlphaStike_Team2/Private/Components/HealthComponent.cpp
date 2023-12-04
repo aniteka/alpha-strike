@@ -16,6 +16,7 @@ UHealthComponent::UHealthComponent()
 void UHealthComponent::DamageTaken(AActor* DamageActor, float Damage, const UDamageType* DamageType,
 	AController* Instigator, AActor* DamageCauser)
 {
+
 	if (Damage <= 0.f || Health <= 0.f)
 		return;
 

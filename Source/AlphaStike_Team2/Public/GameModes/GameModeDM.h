@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AlphaStrikeTypes.h"
-#include "GameFramework/GameMode.h"
+#include "GameModes/BaseGameMode.h"
 #include "GameModeDM.generated.h"
 
 class AAIDeathMatchCharacterController;
@@ -49,24 +49,15 @@ struct FTeamInfo
 	UMaterial* TeamMaterial;
 };
 
-UENUM(BlueprintType)
-enum class EGameState : uint8 {
-	StartGame = 0,
-	InGame,
-	Pause
-};
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnGameStateChanged, EGameState);
 
 UCLASS()
-class ALPHASTIKE_TEAM2_API AGameModeDM : public AGameMode
+class ALPHASTIKE_TEAM2_API AGameModeDM : public ABaseGameMode
 {
 	GENERATED_BODY()
 
 public:
 	AGameModeDM();
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
-	virtual void StartPlay() override;
 
 	ETeamType GetPlayerTeamType() const { return PlayerTeamType; }
 	void SetPlayerTeamType(ETeamType NewPlayerTeamType) { PlayerTeamType = NewPlayerTeamType; }
@@ -76,9 +67,6 @@ public:
 	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
 
 	FOnGameStateChanged OnGameStateChanged;
-
-	virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause())override;
-	virtual bool ClearPause();
 	
 	UMaterial* GetMaterialForTeam(ETeamType Type) const;
 
@@ -113,7 +101,6 @@ private:
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);
 	ACharacter* SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const;
-	void SetNewGameState(EGameState NewState);
 
 	EGameState State;
 };

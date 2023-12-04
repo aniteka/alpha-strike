@@ -17,7 +17,7 @@ void ABaseCharacterController::BeginPlay()
 	Super::BeginPlay();
 
 	if (GetWorld()) {
-		const auto GameMode = Cast<AGameModeDM>(GetWorld()->GetAuthGameMode());
+		const auto GameMode = Cast<ABaseGameMode>(GetWorld()->GetAuthGameMode());
 
 		if (GameMode) {
 			GameMode->OnGameStateChanged.AddUObject(this, &ABaseCharacterController::OnGameStateChanged);

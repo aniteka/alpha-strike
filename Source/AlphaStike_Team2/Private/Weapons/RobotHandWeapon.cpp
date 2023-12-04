@@ -7,6 +7,8 @@
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 
 void ARobotHandWeapon::BeginPlay()
@@ -68,24 +70,14 @@ void ARobotHandWeapon::Shot()
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, ECollisionChannel::ECC_Visibility);
 
-	if(ShotParticles)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShotParticles,
-		                                         HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle,
-		                                         FRotator::ZeroRotator, ShotParticlesScale);
-	}
-	
-	if(bDrawDebugTracers)
-	{
-		DrawDebugLine(GetWorld(), HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, FColor::Red, false, 3.f, 0, 3.f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.f, 24, FColor::Red, false, 3.f, 0, 3.f);
-	}
-		
-	HandIndex = (HandIndex + 1) % 2;
 	DecreaseAmmo();
 
 	if (HitResult.bBlockingHit) {
 		const auto OtherPlayer = HitResult.GetActor();
+
+		EndPoint = HitResult.ImpactPoint;
+		SetupTraceEffect(HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint);
+		HandIndex = (HandIndex + 1) % 2;
 
 		if (!OtherPlayer) {
 			return;
@@ -94,11 +86,24 @@ void ARobotHandWeapon::Shot()
 		OtherPlayer->TakeDamage(AmountOfDamage, FDamageEvent{}, Player->GetController(), this);
 
 	}
+	else {
+		SetupTraceEffect(HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint);
+		HandIndex = (HandIndex + 1) % 2;
+	}
 }
 
 void ARobotHandWeapon::ActiveFX(bool IsActive)
 {
 	if (FireAudioComponent) {
 		FireAudioComponent->SetPaused(!IsActive);
+	}
+}
+
+void ARobotHandWeapon::SetupTraceEffect(const FVector& StartPoint, const FVector& EndPoint)
+{
+	auto BeamNiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BeamTraceEffect, StartPoint);
+
+	if (BeamNiagaraComponent) {
+		BeamNiagaraComponent->SetNiagaraVariableVec3(BeamEndName, EndPoint);
 	}
 }

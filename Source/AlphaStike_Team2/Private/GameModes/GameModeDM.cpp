@@ -35,11 +35,6 @@ void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 	SpawnAllTeams();
 }
 
-void AGameModeDM::StartPlay()
-{
-	Super::StartPlay();
-	SetNewGameState(EGameState::InGame);
-}
 
 TSoftObjectPtr<AAIRoute> AGameModeDM::GetRouteForTeam(ETeamType Type)
 {
@@ -48,17 +43,6 @@ TSoftObjectPtr<AAIRoute> AGameModeDM::GetRouteForTeam(ETeamType Type)
 	return TeamInfos[Type].Routes[FMath::RandRange(0, TeamInfos[Type].Routes.Num() - 1)];
 }
 
-bool AGameModeDM::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
-{
-	SetNewGameState(EGameState::Pause);
-	return Super::SetPause(PC,CanUnpauseDelegate);
-}
-
-bool AGameModeDM::ClearPause()
-{
-	SetNewGameState(EGameState::InGame);
-	return Super::ClearPause();
-}
 
 UMaterial* AGameModeDM::GetMaterialForTeam(ETeamType Type) const
 {
@@ -181,12 +165,4 @@ ACharacter* AGameModeDM::SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, E
 	return Bot;
 }
 
-void AGameModeDM::SetNewGameState(EGameState NewState)
-{
-	if (State == NewState) {
-		return;
-	}
 
-	State = NewState;
-	OnGameStateChanged.Broadcast(NewState);
-}

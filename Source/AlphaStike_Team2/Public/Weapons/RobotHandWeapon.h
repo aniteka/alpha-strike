@@ -6,6 +6,7 @@
 #include "Weapons/BaseWeapon.h"
 #include "RobotHandWeapon.generated.h"
 
+class UNiagaraSystem;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API ARobotHandWeapon : public ABaseWeapon
@@ -21,11 +22,12 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Shot")
 	float ShotRate = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shot")
-	UParticleSystem* ShotParticles;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shot", meta = (EditCondition = "ShotParticles != nullptr", EditConditionHides))
-	FVector ShotParticlesScale = FVector::OneVector;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
+	UNiagaraSystem* BeamTraceEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
+	FString BeamEndName = "BeamEnd";
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shot")
 	bool bDrawDebugTracers = true;
 	
@@ -40,5 +42,6 @@ private:
 
 	void Shot();
 	void ActiveFX(bool IsActive);
+	void SetupTraceEffect(const FVector& StartPoint, const FVector& EndPoint);
 
 };

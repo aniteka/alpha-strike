@@ -16,7 +16,7 @@ void APlayerHUD::BeginPlay()
 	PlayerWidgets.Add(EGameState::Pause, CreateWidget<UPauseWidget>(GetWorld(),PauseWidgetClass));
 
 	if (GetWorld()) {
-		const auto GameMode = Cast<AGameModeDM>(GetWorld()->GetAuthGameMode());
+		const auto GameMode = Cast<ABaseGameMode>(GetWorld()->GetAuthGameMode());
 
 		GameMode->OnGameStateChanged.AddUObject(this, &APlayerHUD::OnGameStateChanged);
 	}

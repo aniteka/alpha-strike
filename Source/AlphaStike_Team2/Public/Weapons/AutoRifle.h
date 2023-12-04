@@ -28,6 +28,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	FName MuzzleSocketName = "MuzzleSocket";
 
+
 private:
 
 	FTimerHandle StartFireTimerHandle;

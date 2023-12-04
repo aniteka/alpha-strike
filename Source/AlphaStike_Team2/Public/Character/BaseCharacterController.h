@@ -6,7 +6,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
-#include "GameModes/GameModeDM.h"
+#include "GameModes/BaseGameMode.h"
 #include "BaseCharacterController.generated.h"
 
 class UInputMappingContext;

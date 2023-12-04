@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "PlayerWidget.h"
 #include "GameFramework/HUD.h"
-#include "GameModes/GameModeDM.h"
+#include "GameModes/BaseGameMode.h"
 #include "PlayerHUD.generated.h"
 
 

@@ -64,3 +64,4 @@ void AAutoRifle::Shot()
 
 	DecreaseAmmo();
 }
+
