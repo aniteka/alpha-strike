@@ -5,7 +5,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Character/BaseCharacter.h"
+#include "Components/HealthComponent.h"
 #include "Components/WeaponComponent.h"
+#include "GameModes/GameModeDM.h"
+#include "UI/Player/PlayerHUD.h"
 
 
 
@@ -37,6 +40,12 @@ void ABaseCharacterController::OnPossess(APawn* aPawn)
 
 	BaseCharacter = Cast<ABaseCharacter>(GetPawn());
 	Tags.Add(FName("Player_Controller"));
+
+	const auto HPComponent = BaseCharacter->GetComponentByClass<UHealthComponent>();
+	check(HPComponent);
+	HPComponent->OnDeathDelegate.AddUObject(this, &ABaseCharacterController::OnDeathCallback);
+
+	GetHUD<APlayerHUD>()->CloseDeathWidget();
 }
 
 void ABaseCharacterController::SetupInputComponent()
@@ -159,6 +168,18 @@ void ABaseCharacterController::OnGameStateChanged(EGameState NewState)
 		bShowMouseCursor = true;
 	}
 }
+	
+void ABaseCharacterController::OnDeathCallback(AController* Damaged, AController* Causer)
+{
+	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	check(GameModeDM && GetPawn());
+	
+	GetPawn()->SetLifeSpan(GameModeDM->GetRespawnTime());
+	UnPossess();
+	GetHUD<APlayerHUD>()->PopupDeathWidget();
+
+	GetWorld()->GetTimerManager().SetTimer(RespawnTimerHandle, GameModeDM->GetRespawnTime(), false);
+}
 
 ETeamAttitude::Type ABaseCharacterController::GetTeamAttitudeTowards(const AActor& Other) const
 {
@@ -170,5 +191,11 @@ ETeamAttitude::Type ABaseCharacterController::GetTeamAttitudeTowards(const AActo
 		}
 	}
 	return IGenericTeamAgentInterface::GetTeamAttitudeTowards(Other);
+}
+
+float ABaseCharacterController::GetRemainingRespawnTime() const
+{
+	const auto RemainingTime =  GetWorld()->GetTimerManager().GetTimerRemaining(RespawnTimerHandle);
+	return (RemainingTime == -1.f) ? 0.f : RemainingTime;
 }
 

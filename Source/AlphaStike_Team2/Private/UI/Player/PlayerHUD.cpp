@@ -8,7 +8,10 @@
 void APlayerHUD::BeginPlay()
 {
 	Super::BeginPlay();
+	check(PlayerWidgetClass && DeathWidgetClass && PauseWidgetClass);
 
+	DeathWidgetPopup = CreateWidget(GetWorld(), DeathWidgetClass);
+	
 	PlayerWidgets.Add(EGameState::InGame, CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass));
 	PlayerWidgets.Add(EGameState::Pause, CreateWidget<UPauseWidget>(GetWorld(),PauseWidgetClass));
 
@@ -29,6 +32,24 @@ void APlayerHUD::BeginPlay()
 		Widget->SetVisibility(ESlateVisibility::Hidden);
 
 	}
+}
+
+void APlayerHUD::PopupDeathWidget()
+{
+	if (!DeathWidgetPopup)
+		return;
+	DeathWidgetPopup->AddToViewport(10);
+	GetOwningPlayerController()->SetShowMouseCursor(true);
+	GetOwningPlayerController()->SetInputMode(FInputModeUIOnly{});
+}
+
+void APlayerHUD::CloseDeathWidget()
+{
+	if (!DeathWidgetPopup)
+		return;
+	DeathWidgetPopup->RemoveFromParent();
+	GetOwningPlayerController()->SetShowMouseCursor(false);
+	GetOwningPlayerController()->SetInputMode(FInputModeGameOnly{});
 }
 
 void APlayerHUD::OnGameStateChanged(EGameState NewState)

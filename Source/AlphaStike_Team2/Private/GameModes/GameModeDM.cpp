@@ -4,6 +4,7 @@
 
 #include "AIController.h"
 #include "MainGameInstance.h"
+#include "Ai/DeathMatch/AIDeathMatchCharacterController.h"
 #include "Ai/DeathMatch/DEPRECATED_AIDeathMatchTeamManager.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/TargetPoint.h"
@@ -29,10 +30,8 @@ void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 	InitPlayerTeamType();
 	InitPlayerSpawnIndex();
 
-	const auto PlayerController = SpawnPlayerInsteadOfBot();
-	if(const auto TeamAgent = Cast<IGenericTeamAgentInterface>(PlayerController))
-		TeamAgent->SetGenericTeamId({static_cast<uint8>(GetPlayerTeamType())});
-	
+	RespawnAndInitPlayer();
+
 	SpawnAllTeams();
 }
 
@@ -61,6 +60,51 @@ bool AGameModeDM::ClearPause()
 	return Super::ClearPause();
 }
 
+UMaterial* AGameModeDM::GetMaterialForTeam(ETeamType Type) const
+{
+	return TeamInfos[Type].TeamMaterial;
+}
+
+AController* AGameModeDM::RespawnAndInitPlayer()
+{
+	check(TeamInfos[PlayerTeamType].Team.IsValidIndex(GetPlayerSpawnIndex()));
+
+	auto& SpawnInfo = TeamInfos[PlayerTeamType].Team[GetPlayerSpawnIndex()];
+	check(SpawnInfo.IsValid());
+	
+	RestartPlayerAtTransform(GetWorld()->GetFirstPlayerController(), SpawnInfo.SpawnPoint->GetTransform());
+	SpawnInfo.bSpawn = false;
+	
+	const auto PlayerController = GetWorld()->GetFirstPlayerController();
+	check(PlayerController);
+	if(const auto TeamAgent = Cast<IGenericTeamAgentInterface>(PlayerController))
+		TeamAgent->SetGenericTeamId({static_cast<uint8>(GetPlayerTeamType())});
+	InitTeamsVisualSignsForCharacter(PlayerController->GetCharacter(), GetMaterialForTeam(PlayerTeamType));
+	
+	return PlayerController;
+}
+
+ACharacter* AGameModeDM::RespawnAndInitBotByController(AAIDeathMatchCharacterController* Controller)
+{
+	const auto SpawnInfo = Controller->GetSpawnInfo();
+	if(!SpawnInfo.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("SpawnInfo is not valid"));
+		return nullptr;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	const auto Bot = GetWorld()->SpawnActor<ACharacter>(SpawnInfo.BotClass, SpawnInfo.SpawnPoint->GetTransform(), SpawnParams);
+
+	Controller->Possess(Bot);
+
+	InitTeamsVisualSignsForCharacter(
+		Bot, GetMaterialForTeam(static_cast<ETeamType>(Controller->GetGenericTeamId().GetId())));
+	
+	return Bot;
+}
+
 void AGameModeDM::InitPlayerSpawnIndex()
 {
 	if(PlayerSpawnIndex == -1)
@@ -77,17 +121,10 @@ void AGameModeDM::InitPlayerTeamType()
 		UE_LOG(LogTemp, Error, TEXT("TeamInfos.Contains(PlayerTeamType) == false"));
 }
 
-AController* AGameModeDM::SpawnPlayerInsteadOfBot()
+void AGameModeDM::InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial) const
 {
-	check(TeamInfos[PlayerTeamType].Team.IsValidIndex(GetPlayerSpawnIndex()));
-
-	auto& SpawnInfo = TeamInfos[PlayerTeamType].Team[GetPlayerSpawnIndex()];
-	check(SpawnInfo.IsValid());
-	
-	RestartPlayerAtTransform(GetWorld()->GetFirstPlayerController(), SpawnInfo.SpawnPoint->GetTransform());
-	SpawnInfo.bSpawn = false;
-
-	return GetWorld()->GetFirstPlayerController();
+	if(const auto BaseCharacter = Cast<ABaseCharacter>(Character))
+		BaseCharacter->InitTeamsVisualSigns(TeamMaterial);
 }
 
 void AGameModeDM::SpawnAllTeams()
@@ -101,13 +138,12 @@ void AGameModeDM::SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type)
 	for (const auto& BotInfo : TeamInfo.Team)
 		if(BotInfo.bSpawn)
 		{
-			const auto Bot = SpawnBotByInfo(BotInfo);
-			if(const auto TeamAgent = Bot->GetController<IGenericTeamAgentInterface>())
-				TeamAgent->SetGenericTeamId({static_cast<uint8>(Type)});
+			const auto Bot = SpawnAndInitBotByInfo(BotInfo, Type);
+			check(Bot);
 		}
 }
 
-ACharacter* AGameModeDM::SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const
+ACharacter* AGameModeDM::SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const
 {
 	if(!SpawnInfo.IsValid())
 	{
@@ -117,9 +153,31 @@ ACharacter* AGameModeDM::SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	const auto Bot = GetWorld()->SpawnActor<ACharacter>(SpawnInfo.BotClass, SpawnInfo.SpawnPoint->GetTransform(), SpawnParams);
+	if(!Bot)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cant spawn bot"));
+		return nullptr;
+	}
+	
+	if(SpawnInfo.BotController)
+	{
+		Bot->AIControllerClass = SpawnInfo.BotController.Get();
+		if(const auto BotController = Bot->GetController())
+		{
+			BotController->UnPossess();
+			BotController->Destroy();
+		}
+		Bot->SpawnDefaultController();
+	}
 
-	Bot->AIControllerClass = SpawnInfo.BotController.Get();
-	Bot->SpawnDefaultController();
+	if(const auto DMCharController = Bot->GetController<AAIDeathMatchCharacterController>())
+		DMCharController->SetSpawnInfo(SpawnInfo);
+
+	if(const auto TeamAgent = Bot->GetController<IGenericTeamAgentInterface>())
+		TeamAgent->SetGenericTeamId({static_cast<uint8>(TeamType)});
+	
+	InitTeamsVisualSignsForCharacter(Bot, GetMaterialForTeam(TeamType));
+	
 	return Bot;
 }
 

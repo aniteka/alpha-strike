@@ -35,14 +35,19 @@ protected:
 	void GamePause(const FInputActionValue& Value);
 	void OnGameStateChanged(EGameState NewState);
 
+	void OnDeathCallback(AController* Damaged, AController* Causer);
+	
 public:
-
 	/*
 	 * Implementation of IGenericTeamAgentInterface
 	 */
 	virtual void SetGenericTeamId(const FGenericTeamId& TeamID) override { GenericTeamId = TeamID; };
 	virtual FGenericTeamId GetGenericTeamId() const override { return GenericTeamId; };
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+
+	// If 0 then base character is respawned of can be respawned
+	UFUNCTION(BlueprintCallable)
+	float GetRemainingRespawnTime() const;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -75,4 +80,5 @@ protected:
 private:
 	ABaseCharacter* BaseCharacter;
 	FGenericTeamId GenericTeamId;
+	FTimerHandle RespawnTimerHandle;
 };

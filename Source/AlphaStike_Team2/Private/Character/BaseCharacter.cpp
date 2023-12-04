@@ -4,10 +4,14 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include <Kismet/GameplayStatics.h>
+
+#include "DelayAction.h"
 #include "UI/Widgets/HealthBarWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Components/WeaponComponent.h"
 #include "Components/HealthComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 
 ABaseCharacter::ABaseCharacter()
@@ -37,11 +41,35 @@ ABaseCharacter::ABaseCharacter()
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(ArmComponent);
+
+	PerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(
+		"PerceptionStimuliSourceComponent");
+	PerceptionStimuliSourceComponent->bAutoRegister;
 }
 
 void ABaseCharacter::UpdateCameraOffset()
 {
 	ArmComponent->SetRelativeRotation({ -R_Hand->GetRelativeRotation().Roll, MeshBody->GetComponentRotation().Pitch,0.f });
+}
+
+void ABaseCharacter::OnDeathCallback(AController* Damaged, AController* Causer)
+{
+	PerceptionStimuliSourceComponent->UnregisterFromPerceptionSystem();
+
+	WeaponComponent->StopFire();
+	
+	const auto OldRotation = MeshBody->GetComponentRotation();
+	const auto OldLocation = MeshBody->GetComponentLocation();
+	MeshBody->SetAbsolute(true, true);
+	MeshBody->SetWorldRotation(OldRotation);
+	MeshBody->SetWorldLocation(OldLocation);
+	MeshBody->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	MeshBody->SetSimulatePhysics(true);
+
+	MeshBody->AddImpulse(DeathExplosionHeadImpulse);
+
+	if(ExplosionParticle)
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticle, GetTransform());
 }
 
 void ABaseCharacter::BeginPlay()
@@ -58,6 +86,10 @@ void ABaseCharacter::BeginPlay()
 		Tags.Add(FName("Player"));		
 	}
 	HealthBarWidgetComponent->SetVisibility(false);
+
+	HealthComponent->OnDeathDelegate.AddUObject(this, &ABaseCharacter::OnDeathCallback);
+
+	PerceptionStimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
 }
 
 void ABaseCharacter::Tick(float DeltaTime)
@@ -73,6 +105,11 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABaseCharacter::InitTeamsVisualSigns(UMaterial* Material)
+{
+	MeshBody->SetMaterial(1, Material);
 }
 
 void ABaseCharacter::RotateBody()

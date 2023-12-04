@@ -67,9 +67,20 @@ void ARobotHandWeapon::Shot()
 	FHitResult HitResult;
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, ECollisionChannel::ECC_Visibility);
-	DrawDebugLine(GetWorld(), HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, FColor::Red, false, 3.f, 0, 3.f);
-	DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.f, 24, FColor::Red, false, 3.f, 0, 3.f);
 
+	if(ShotParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShotParticles,
+		                                         HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle,
+		                                         FRotator::ZeroRotator, ShotParticlesScale);
+	}
+	
+	if(bDrawDebugTracers)
+	{
+		DrawDebugLine(GetWorld(), HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint, FColor::Red, false, 3.f, 0, 3.f);
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 50.f, 24, FColor::Red, false, 3.f, 0, 3.f);
+	}
+		
 	HandIndex = (HandIndex + 1) % 2;
 	DecreaseAmmo();
 

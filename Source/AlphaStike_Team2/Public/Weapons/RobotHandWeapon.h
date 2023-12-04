@@ -21,6 +21,15 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Shot")
 	float ShotRate = 0.1f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shot")
+	UParticleSystem* ShotParticles;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shot", meta = (EditCondition = "ShotParticles != nullptr", EditConditionHides))
+	FVector ShotParticlesScale = FVector::OneVector;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shot")
+	bool bDrawDebugTracers = true;
+	
+	
 	void SpawnFX();
 
 private:

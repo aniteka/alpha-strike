@@ -9,6 +9,10 @@
 #include "WeaponComponent.generated.h"
 
 class USoundCue;
+class UWeaponComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStartWeaponReloading, UWeaponComponent*, WeaponComponent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEndWeaponReloading, UWeaponComponent*, WeaponComponent);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ALPHASTIKE_TEAM2_API UWeaponComponent : public UActorComponent
@@ -38,6 +42,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundCue* ReloadSound;
 
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Delegates")
+	FOnStartWeaponReloading OnStartWeaponReloading;
+
+	UPROPERTY(BlueprintAssignable, Category = "Delegates")
+	FOnEndWeaponReloading OnEndWeaponReloading;
+	
 private:
 	TArray<ABaseWeapon*> Weapons;
 

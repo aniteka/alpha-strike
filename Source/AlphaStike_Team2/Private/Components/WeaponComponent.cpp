@@ -45,9 +45,12 @@ void UWeaponComponent::Reload()
 			return;
 		}
 
+		OnStartWeaponReloading.Broadcast(this);
+		
 		AudioComponent->OnAudioFinishedNative.AddLambda([&](UAudioComponent* AudioComponent) {
 			IsReloadSoundPlaying = false;
 			CurrentWeapon->Reload();
+			OnEndWeaponReloading.Broadcast(this);
 		});
 
 	}

@@ -30,8 +30,9 @@ void UBTService_Shooting::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, ui
 	NodeInstance->WeaponComponent = Pawn->GetComponentByClass<UWeaponComponent>();
 	check(NodeInstance->WeaponComponent);
 
-	if(NodeInstance->WeaponComponent->GetCurrentWeapon()->IsA(ARobotHandWeapon::StaticClass()))
-		NodeInstance->WeaponComponent->StartFire();
+	NodeInstance->WeaponComponent->OnEndWeaponReloading.AddDynamic(this, &UBTService_Shooting::StartFire);
+
+	StartFire(NodeInstance->WeaponComponent);
 }
 
 void UBTService_Shooting::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -41,9 +42,19 @@ void UBTService_Shooting::OnCeaseRelevant(UBehaviorTreeComponent& OwnerComp, uin
 
 	if(NodeInstance->WeaponComponent->GetCurrentWeapon()->IsA(ARobotHandWeapon::StaticClass()))
 		NodeInstance->WeaponComponent->StopFire();
+
+	NodeInstance->WeaponComponent->OnEndWeaponReloading.RemoveDynamic(this, &UBTService_Shooting::StartFire);
 }
 
 uint16 UBTService_Shooting::GetInstanceMemorySize() const
 {
 	return sizeof(FNodeMemory_Shooting);
+}
+
+void UBTService_Shooting::StartFire(UWeaponComponent* WeaponComponent)
+{
+	if(!WeaponComponent)
+		return;
+	if(WeaponComponent->GetCurrentWeapon()->IsA(ARobotHandWeapon::StaticClass()))
+		WeaponComponent->StartFire();
 }
