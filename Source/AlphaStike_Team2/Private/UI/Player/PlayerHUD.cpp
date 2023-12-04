@@ -10,7 +10,7 @@ void APlayerHUD::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerWidgets.Add(EGameState::InGame, CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass));
-	PlayerWidgets.Add(EGameState::Pause, CreateWidget<UPauseWidget>(GetWorld(),PauseWidgetClass));
+	PlayerWidgets.Add(EGameState::Pause, CreateWidget<UPauseWidget>(GetWorld(), PauseWidgetClass));
 
 	if (GetWorld()) {
 		const auto GameMode = Cast<AGameModeDM>(GetWorld()->GetAuthGameMode());

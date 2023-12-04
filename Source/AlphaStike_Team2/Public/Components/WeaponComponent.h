@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Weapons/BaseWeapon.h"
+#include "Weapons/RobotHandWeapon.h"
 #include "InputActionValue.h"
 #include "WeaponComponent.generated.h"
 
@@ -30,7 +31,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
-	TArray<TSubclassOf<ABaseWeapon>> WeaponClasses;
+	TArray<TSubclassOf<ARobotHandWeapon>> WeaponClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName BagSocketName = "BagSocket";

@@ -70,13 +70,21 @@ protected:
 	float TimeToShowHealthOnDamage{ 3.f };
 	float LastTimeDamageTaken{ 0.f };
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TObjectPtr<USkeletalMeshComponent> L_Weapon{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TObjectPtr<USkeletalMeshComponent> R_Weapon{ nullptr };
 private:
 	void UpdateCameraOffset();
+	void RotateBody();	
+	bool HandsRotationInRange(const float& LookAtTarget);
 
 	bool TakenDamageRecently = false;
 public:	
 	UPROPERTY(EditAnywhere, Category = "Game Settings")
 	bool CameraWalkShake{true};
+
+	void RotateHands(float LookAtTarget);
 
 	virtual void Tick(float DeltaTime) override;
 
@@ -84,9 +92,7 @@ public:
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+	void SwapWeapon(USkeletalMesh* NewWeaponSkeletalMesh);
 
-	void RotateBody();
-	void RotateHands(float LookAtTarget);
-	void InitializeHealthBar();
-	bool HandsRotationInRange(const float& LookAtTarget);
+	void InitializeHealthBar();	
 };

@@ -22,14 +22,20 @@ ABaseCharacter::ABaseCharacter()
 	HealthBarWidgetComponent->SetDrawSize(FVector2D(200, 18));
 
 	MeshBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh Body"));
-	MeshBody->SetupAttachment(GetMesh());
+	//MeshBody->SetupAttachment(GetMesh());
 	MeshBody->SetupAttachment(GetMesh(), FName(TEXT("Body_Soket")));	
 
 	R_Hand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Right Hand"));
 	R_Hand->SetupAttachment(MeshBody);
 
+	R_Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("R_Weapon"));
+	R_Weapon->SetupAttachment(R_Hand, FName(TEXT("DeafaultRobotWeapon")));
+
 	L_Hand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Left Hand"));
-	L_Hand->SetupAttachment(MeshBody);
+	L_Hand->SetupAttachment(MeshBody);	
+
+	L_Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("L_Weapon"));
+	L_Weapon->SetupAttachment(L_Hand, FName(TEXT("DeafaultRobotWeapon")));
 
 	ArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	ArmComponent->bUsePawnControlRotation = false;
@@ -150,5 +156,11 @@ void ABaseCharacter::UpdateHealthBarVisibility()
 			HealthBarWidgetComponent->SetVisibility(true);
 		}
 	}
+}
+
+void ABaseCharacter::SwapWeapon(USkeletalMesh* NewWeaponSkeletalMesh)
+{
+	R_Weapon->SetSkeletalMesh(NewWeaponSkeletalMesh);
+	L_Weapon->SetSkeletalMesh(NewWeaponSkeletalMesh);
 }
 
