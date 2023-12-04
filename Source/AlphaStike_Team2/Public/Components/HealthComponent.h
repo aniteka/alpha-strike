@@ -7,7 +7,7 @@
 #include "HealthComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthUpdate, float);
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDeathDelegate, AController* /*Damaged*/, AController* /*Causer*/);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ALPHASTIKE_TEAM2_API UHealthComponent : public UActorComponent
@@ -33,6 +33,7 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:	
 	FOnHealthUpdate OnHealthUpdate;
+	FOnDeathDelegate OnDeathDelegate;
 
 	void Heal(const float &Heal_amount);
 

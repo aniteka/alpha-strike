@@ -50,5 +50,6 @@ void UAIRouteManagerComponent::TryGetRouteFromGM()
 	const auto TeamAgent = GetOwner<IGenericTeamAgentInterface>(); 
 	check(GameMode);
 	CurrentRoute = GameMode->GetRouteForTeam(static_cast<ETeamType>(TeamAgent->GetGenericTeamId().GetId()));
+	CurrentPointIndex = 0;
 }
 

@@ -34,13 +34,12 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Route")
 	FVector GetCurrentLocation() const;
-	
+
+	void TryGetRouteFromGM();
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Route")
 	TSoftObjectPtr<AAIRoute> CurrentRoute = nullptr;
 
 	int32 CurrentPointIndex = 0;
-
-private:
-	void TryGetRouteFromGM();
+	
 };

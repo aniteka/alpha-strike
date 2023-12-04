@@ -7,6 +7,7 @@
 #include "GameFramework/GameMode.h"
 #include "GameModeDM.generated.h"
 
+class AAIDeathMatchCharacterController;
 class AAIRoute;
 class ADEPRECATED_AIDeathMatchTeamManager;
 class AAIController;
@@ -43,6 +44,9 @@ struct FTeamInfo
 
 	UPROPERTY(EditAnywhere)
 	TArray<TSoftObjectPtr<AAIRoute>> Routes;
+
+	UPROPERTY(EditAnywhere)
+	UMaterial* TeamMaterial;
 };
 
 UCLASS()
@@ -60,7 +64,17 @@ public:
 	int32 GetPlayerSpawnIndex() const { return PlayerSpawnIndex; }
 
 	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
-	
+
+	UMaterial* GetMaterialForTeam(ETeamType Type) const;
+
+	float GetRespawnTime() const { return RespawnTime; }
+
+	UFUNCTION(BlueprintCallable)
+	AController* RespawnAndInitPlayer();
+
+	UFUNCTION(BlueprintCallable)
+	ACharacter* RespawnAndInitBotByController(AAIDeathMatchCharacterController* Controller);
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Spawn")
 	TMap<ETeamType, FTeamInfo> TeamInfos;
@@ -72,13 +86,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Player", meta = (ClampMin = 0, UIMax = 10))
 	int32 PlayerSpawnIndex = -1;
 
+	UPROPERTY(EditAnywhere, Category = "Deathmatch")
+	float RespawnTime = 5.f;
+	
 private:
 	void InitPlayerSpawnIndex();
 	void InitPlayerTeamType();
 	
-	AController* SpawnPlayerInsteadOfBot();
-	
+
+	void InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial) const;
+
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);
-	ACharacter* SpawnBotByInfo(const FBotSpawnInfo& SpawnInfo) const;
+	ACharacter* SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const;
 };

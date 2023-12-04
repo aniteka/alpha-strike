@@ -16,7 +16,8 @@ UHealthComponent::UHealthComponent()
 void UHealthComponent::DamageTaken(AActor* DamageActor, float Damage, const UDamageType* DamageType,
 	AController* Instigator, AActor* DamageCauser)
 {
-	if (Damage <= 0.f) return;
+	if (Damage <= 0.f || Health <= 0.f)
+		return;
 
 	Health -= Damage;
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), Health);
@@ -26,6 +27,8 @@ void UHealthComponent::DamageTaken(AActor* DamageActor, float Damage, const UDam
 	if (Health <= 0.f)
 	{
 		HandleDestroy(DamageActor);
+		if(GetOwner<APawn>() && GetOwner<APawn>()->GetController())
+			OnDeathDelegate.Broadcast(GetOwner<APawn>()->GetController(), Instigator);
 	}
 
 	// For AIPerception
