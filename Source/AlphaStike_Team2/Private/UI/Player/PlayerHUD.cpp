@@ -13,7 +13,7 @@ void APlayerHUD::BeginPlay()
 	DeathWidgetPopup = CreateWidget(GetWorld(), DeathWidgetClass);
 	
 	PlayerWidgets.Add(EGameState::InGame, CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass));
-	PlayerWidgets.Add(EGameState::Pause, CreateWidget<UPauseWidget>(GetWorld(),PauseWidgetClass));
+	PlayerWidgets.Add(EGameState::Pause, CreateWidget<UPauseWidget>(GetWorld(), PauseWidgetClass));
 
 	if (GetWorld()) {
 		const auto GameMode = Cast<ABaseGameMode>(GetWorld()->GetAuthGameMode());

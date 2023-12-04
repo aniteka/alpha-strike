@@ -27,6 +27,13 @@ struct FAmmoData {
 	UTexture2D* WeaponIcon;
 };
 
+USTRUCT(BlueprintType)
+struct FWeaponData {
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	USkeletalMesh* Weapon_Skeletal_Mesh{ nullptr };
+};
 
 
 UCLASS()
@@ -50,6 +57,10 @@ public:
 		return CurrentAmmoData;
 	}
 
+	inline FWeaponData GetWeaponData() const{
+		return DefaultWeaponData;
+	}
+
 	FOnClipEmpty OnClipEmpty;
 
 protected:
@@ -70,6 +81,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Ammo")
 	FAmmoData DefaultAmmoData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FWeaponData DefaultWeaponData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	float ShotDistance = 2000.f;
@@ -94,5 +108,5 @@ protected:
 private:
 
 	FAmmoData CurrentAmmoData;
-	
+	FWeaponData WeaponData;
 };

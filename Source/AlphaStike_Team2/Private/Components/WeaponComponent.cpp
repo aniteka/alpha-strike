@@ -10,6 +10,8 @@
 UWeaponComponent::UWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	
 }
 
 void UWeaponComponent::StartFire()
@@ -119,7 +121,18 @@ void UWeaponComponent::TakeWeapon()
 		CurrentWeapon->StopFire();
 	}
 
+
 	CurrentWeapon = Weapons[WeaponIndex];
+	auto Player = Cast<ABaseCharacter>(GetOwner());
+	if (!Player)
+	{
+		return;
+	}
+	if (!CurrentWeapon->GetWeaponData().Weapon_Skeletal_Mesh)
+	{
+		return;		
+	}
+	Player->SwapWeapon(CurrentWeapon->GetWeaponData().Weapon_Skeletal_Mesh);	
 }
 
 
