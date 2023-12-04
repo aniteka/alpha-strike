@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
+#include "Components/WeaponComponent.h"
 #include "BTService_Shooting.generated.h"
 
 UCLASS()
@@ -25,4 +26,8 @@ protected:
 	float ShootInterval = 0.5f;
 	UPROPERTY(EditAnywhere, DisplayName = "RandomDeviation", Category = "Options")
 	float ShootIntervalRandomDeviation = 0.1f;
+
+private:
+	UFUNCTION()
+	void StartFire(UWeaponComponent* WeaponComponent);
 };

@@ -19,6 +19,10 @@ void UHealthComponent::DamageTaken(AActor* DamageActor, float Damage, const UDam
 	if (Damage <= 0.f || Health <= 0.f)
 		return;
 
+	const auto DamagedActorTeamAgent = Cast<APawn>(DamageActor)->GetController<IGenericTeamAgentInterface>();
+	if(DamagedActorTeamAgent && Instigator && DamagedActorTeamAgent->GetTeamAttitudeTowards(*Instigator) == ETeamAttitude::Friendly)
+		return;
+	
 	Health -= Damage;
 	//UE_LOG(LogTemp, Warning, TEXT("%f"), Health);
 

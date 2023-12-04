@@ -55,6 +55,8 @@ void ABaseCharacter::UpdateCameraOffset()
 void ABaseCharacter::OnDeathCallback(AController* Damaged, AController* Causer)
 {
 	PerceptionStimuliSourceComponent->UnregisterFromPerceptionSystem();
+
+	WeaponComponent->StopFire();
 	
 	const auto OldRotation = MeshBody->GetComponentRotation();
 	const auto OldLocation = MeshBody->GetComponentLocation();
