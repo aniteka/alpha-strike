@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Ai/DeathMatch/AIDeathMatchCharacterController.h"
+#include "Ai/AIDeathMatchCharacterController.h"
 
 #include "BrainComponent.h"
 #include "Ai/Components/AIHostileManagerComponent.h"

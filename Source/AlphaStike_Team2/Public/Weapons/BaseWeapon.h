@@ -45,6 +45,8 @@ class ALPHASTIKE_TEAM2_API ABaseWeapon : public AActor
 public:	
 	ABaseWeapon();
 
+	void InitForAI();
+
 	virtual void StartFire(){}
 	virtual void StopFire(){}
 
@@ -81,7 +83,9 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Ammo")
 	FAmmoData DefaultAmmoData;
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Ammo|AI")
+	FAmmoData AIAmmoData;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FWeaponData DefaultWeaponData;
 
@@ -90,6 +94,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	float AmountOfDamage = 10.f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Ammo|AI")
+	float AIAmountOfDamage = 10.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	FName LeftHandMuzzleSocketName = "LeftHandMuzzle";
@@ -99,6 +105,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	float Spread = 2.f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapon|AI")
+	float AISpread = 2.f;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Sound")
 	USoundCue* FireSound;

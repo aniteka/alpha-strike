@@ -1,6 +1,8 @@
 
 
 #include "Components/WeaponComponent.h"
+
+#include "AIController.h"
 #include "Weapons/BaseWeapon.h"
 #include "Character/BaseCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -111,6 +113,12 @@ void UWeaponComponent::CreateWeapon()
 		CurWeapon->OnClipEmpty.AddUObject(this, &UWeaponComponent::Reload);
 		CurWeapon->AttachToComponent(Player->GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, false), BagSocketName);
 
+		if (const auto PawnController = GetOwner<APawn>()->GetController();
+			PawnController && PawnController->IsA(AAIController::StaticClass()))
+		{
+			CurWeapon->InitForAI();
+		}
+		
 		Weapons.Add(CurWeapon);
 	}
 }

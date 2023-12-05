@@ -4,7 +4,7 @@
 
 #include "AIController.h"
 #include "MainGameInstance.h"
-#include "Ai/DeathMatch/AIDeathMatchCharacterController.h"
+#include "Ai/AIDeathMatchCharacterController.h"
 #include "Ai/DeathMatch/DEPRECATED_AIDeathMatchTeamManager.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/TargetPoint.h"
