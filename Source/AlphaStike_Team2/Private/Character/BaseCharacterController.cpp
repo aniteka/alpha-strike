@@ -7,7 +7,7 @@
 #include "Character/BaseCharacter.h"
 #include "Components/HealthComponent.h"
 #include "Components/WeaponComponent.h"
-#include "GameModes/GameModeDM.h"
+#include "GameModes/MainGameMode.h"
 #include "UI/Player/PlayerHUD.h"
 
 
@@ -116,6 +116,8 @@ void ABaseCharacterController::Jump(const FInputActionValue& Value)
 
 void ABaseCharacterController::StartFire(const FInputActionValue& Value)
 {
+	if(!GetPawn()) return;
+	
 	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->StartFire();
 	}
@@ -123,6 +125,8 @@ void ABaseCharacterController::StartFire(const FInputActionValue& Value)
 
 void ABaseCharacterController::StopFire(const FInputActionValue& Value)
 {
+	if(!GetPawn()) return;
+
 	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->StopFire();
 	}
@@ -130,6 +134,8 @@ void ABaseCharacterController::StopFire(const FInputActionValue& Value)
 
 void ABaseCharacterController::Reload(const FInputActionValue& Value)
 {
+	if(!GetPawn()) return;
+	
 	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->Reload();
 	}
@@ -137,6 +143,8 @@ void ABaseCharacterController::Reload(const FInputActionValue& Value)
 
 void ABaseCharacterController::SwitchWeapon(const FInputActionValue& Value)
 {
+	if(!GetPawn()) return;
+	
 	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->SwitchWeapon();
 	}
@@ -171,7 +179,7 @@ void ABaseCharacterController::OnGameStateChanged(EGameState NewState)
 	
 void ABaseCharacterController::OnDeathCallback(AController* Damaged, AController* Causer)
 {
-	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	const auto GameModeDM = GetWorld()->GetAuthGameMode<AMainGameMode>();
 	check(GameModeDM && GetPawn());
 	
 	GetPawn()->SetLifeSpan(GameModeDM->GetRespawnTime());

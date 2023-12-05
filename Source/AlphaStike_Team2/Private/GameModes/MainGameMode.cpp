@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "GameModes/GameModeDM.h"
+#include "GameModes/MainGameMode.h"
 
 #include "AIController.h"
 #include "MainGameInstance.h"
@@ -16,17 +16,19 @@ bool FBotSpawnInfo::IsValid() const
 
 
 
-AGameModeDM::AGameModeDM()
+AMainGameMode::AMainGameMode()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	DefaultPawnClass = nullptr;
 }
 
-void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+void AMainGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 
+	FGenericTeamId::SetAttitudeSolver(MainTeamAttitudeSolver);
+	
 	InitPlayerTeamType();
 	InitPlayerSpawnIndex();
 
@@ -36,7 +38,7 @@ void AGameModeDM::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 }
 
 
-TSoftObjectPtr<AAIRoute> AGameModeDM::GetRouteForTeam(ETeamType Type)
+TSoftObjectPtr<AAIRoute> AMainGameMode::GetRouteForTeam(ETeamType Type)
 {
 	if(Type == ETeamType::None || !TeamInfos.Find(Type) || TeamInfos[Type].Routes.Num() == 0)
 		return nullptr;
@@ -44,12 +46,12 @@ TSoftObjectPtr<AAIRoute> AGameModeDM::GetRouteForTeam(ETeamType Type)
 }
 
 
-UMaterial* AGameModeDM::GetMaterialForTeam(ETeamType Type) const
+UMaterial* AMainGameMode::GetMaterialForTeam(ETeamType Type) const
 {
 	return TeamInfos[Type].TeamMaterial;
 }
 
-AController* AGameModeDM::RespawnAndInitPlayer()
+AController* AMainGameMode::RespawnAndInitPlayer()
 {
 	check(TeamInfos[PlayerTeamType].Team.IsValidIndex(GetPlayerSpawnIndex()));
 
@@ -68,7 +70,7 @@ AController* AGameModeDM::RespawnAndInitPlayer()
 	return PlayerController;
 }
 
-ACharacter* AGameModeDM::RespawnAndInitBotByController(AAIDeathMatchCharacterController* Controller)
+ACharacter* AMainGameMode::RespawnAndInitBotByController(AAIDeathMatchCharacterController* Controller)
 {
 	const auto SpawnInfo = Controller->GetSpawnInfo();
 	if(!SpawnInfo.IsValid())
@@ -89,13 +91,13 @@ ACharacter* AGameModeDM::RespawnAndInitBotByController(AAIDeathMatchCharacterCon
 	return Bot;
 }
 
-void AGameModeDM::InitPlayerSpawnIndex()
+void AMainGameMode::InitPlayerSpawnIndex()
 {
 	if(PlayerSpawnIndex == -1)
 		PlayerSpawnIndex = FMath::RandRange(0, TeamInfos[PlayerTeamType].Team.Num() - 1);
 }
 
-void AGameModeDM::InitPlayerTeamType()
+void AMainGameMode::InitPlayerTeamType()
 {
 	const auto MainGameInstance = GetGameInstance<UMainGameInstance>();
 	check(MainGameInstance);
@@ -105,19 +107,19 @@ void AGameModeDM::InitPlayerTeamType()
 		UE_LOG(LogTemp, Error, TEXT("TeamInfos.Contains(PlayerTeamType) == false"));
 }
 
-void AGameModeDM::InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial) const
+void AMainGameMode::InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial) const
 {
 	if(const auto BaseCharacter = Cast<ABaseCharacter>(Character))
 		BaseCharacter->InitTeamsVisualSigns(TeamMaterial);
 }
 
-void AGameModeDM::SpawnAllTeams()
+void AMainGameMode::SpawnAllTeams()
 {
 	for (const auto& TeamInfo : TeamInfos)
 		SpawnTeam(TeamInfo.Value, TeamInfo.Key);
 }
 
-void AGameModeDM::SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type)
+void AMainGameMode::SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type)
 {
 	for (const auto& BotInfo : TeamInfo.Team)
 		if(BotInfo.bSpawn)
@@ -127,7 +129,7 @@ void AGameModeDM::SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type)
 		}
 }
 
-ACharacter* AGameModeDM::SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const
+ACharacter* AMainGameMode::SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const
 {
 	if(!SpawnInfo.IsValid())
 	{

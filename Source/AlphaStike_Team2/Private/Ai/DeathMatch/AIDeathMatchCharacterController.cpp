@@ -85,7 +85,7 @@ ETeamAttitude::Type AAIDeathMatchCharacterController::GetTeamAttitudeTowards(con
 
 void AAIDeathMatchCharacterController::RespawnBot()
 {
-	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	const auto GameModeDM = GetWorld()->GetAuthGameMode<AMainGameMode>();
 	check(GameModeDM);
 	const auto BaseCharacter = Cast<ABaseCharacter>(GameModeDM->RespawnAndInitBotByController(this));
 	if(!BaseCharacter)
@@ -99,7 +99,7 @@ void AAIDeathMatchCharacterController::OnDeathCallback(AController* Damaged, ACo
 {
 	if(!GetPawn())
 		return;
-	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	const auto GameModeDM = GetWorld()->GetAuthGameMode<AMainGameMode>();
 	check(GameModeDM);
 	
 	GetPawn()->SetLifeSpan(GameModeDM->GetRespawnTime());

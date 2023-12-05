@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AlphaStrikeTypes.h"
 #include "GameModes/BaseGameMode.h"
-#include "GameModeDM.generated.h"
+#include "MainGameMode.generated.h"
 
 class AAIDeathMatchCharacterController;
 class AAIRoute;
@@ -51,12 +51,12 @@ struct FTeamInfo
 
 
 UCLASS()
-class ALPHASTIKE_TEAM2_API AGameModeDM : public ABaseGameMode
+class ALPHASTIKE_TEAM2_API AMainGameMode : public ABaseGameMode
 {
 	GENERATED_BODY()
 
 public:
-	AGameModeDM();
+	AMainGameMode();
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
 	ETeamType GetPlayerTeamType() const { return PlayerTeamType; }

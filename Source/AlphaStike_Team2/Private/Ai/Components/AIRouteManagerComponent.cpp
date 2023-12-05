@@ -6,7 +6,7 @@
 #include "AITypes.h"
 #include "Ai/AIRoute.h"
 #include "Components/SplineComponent.h"
-#include "GameModes/GameModeDM.h"
+#include "GameModes/MainGameMode.h"
 
 
 UAIRouteManagerComponent::UAIRouteManagerComponent()
@@ -46,7 +46,7 @@ FVector UAIRouteManagerComponent::GetCurrentLocation() const
 
 void UAIRouteManagerComponent::TryGetRouteFromGM()
 {
-	const auto GameMode = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	const auto GameMode = GetWorld()->GetAuthGameMode<AMainGameMode>();
 	const auto TeamAgent = GetOwner<IGenericTeamAgentInterface>(); 
 	check(GameMode);
 	CurrentRoute = GameMode->GetRouteForTeam(static_cast<ETeamType>(TeamAgent->GetGenericTeamId().GetId()));
