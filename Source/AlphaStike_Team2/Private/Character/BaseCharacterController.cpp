@@ -76,68 +76,68 @@ void ABaseCharacterController::Move(const FInputActionValue& Value)
 {
 	FVector2D Movement = Value.Get<FVector2D>();
 	
-	if (BaseCharacter) {
-		BaseCharacter->AddMovementInput(BaseCharacter->GetActorForwardVector(), Movement.Y);
-		BaseCharacter->AddMovementInput(BaseCharacter->GetActorRightVector(), Movement.X);
+	if (GetPawn()) {
+		GetPawn()->AddMovementInput(GetPawn()->GetActorForwardVector(), Movement.Y);
+		GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Movement.X);
 	}
 }
 
 void ABaseCharacterController::Look(const FInputActionValue& Value)
 {
 	FVector2D LookVector = Value.Get<FVector2D>();
-	if (BaseCharacter) {
-		BaseCharacter->AddControllerYawInput(LookVector.X);
-		BaseCharacter->AddControllerPitchInput(-LookVector.Y);
+	if (GetPawn()) {
+		GetPawn()->AddControllerYawInput(LookVector.X);
+		GetPawn()->AddControllerPitchInput(-LookVector.Y);
 
-		BaseCharacter->RotateHands(-LookVector.Y);
+		GetPawn<ABaseCharacter>()->RotateHands(-LookVector.Y);
 	}
 }
 
 void ABaseCharacterController::StartCrouch(const FInputActionValue& Value)
 {
-	if (BaseCharacter) {
+	if (GetPawn()) {
 		BaseCharacter->Crouch();
 	}
 }
 
 void ABaseCharacterController::StopCrouch(const FInputActionValue& Value)
 {
-	if (BaseCharacter) {
+	if (GetPawn()) {
 		BaseCharacter->UnCrouch();
 	}
 }
 
 void ABaseCharacterController::Jump(const FInputActionValue& Value)
 {
-	if (BaseCharacter) {
+	if (GetPawn()) {
 		BaseCharacter->Jump();
 	}
 }
 
 void ABaseCharacterController::StartFire(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->StartFire();
 	}
 }
 
 void ABaseCharacterController::StopFire(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->StopFire();
 	}
 }
 
 void ABaseCharacterController::Reload(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->Reload();
 	}
 }
 
 void ABaseCharacterController::SwitchWeapon(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->SwitchWeapon();
 	}
 }
