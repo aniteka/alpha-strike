@@ -35,7 +35,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon")
-	TArray<TSubclassOf<ARobotHandWeapon>> WeaponClasses;
+	TArray<TSubclassOf<ABaseWeapon>> WeaponClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName BagSocketName = "BagSocket";
