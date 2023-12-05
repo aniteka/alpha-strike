@@ -11,6 +11,7 @@ void APlayerHUD::BeginPlay()
 	check(PlayerWidgetClass && DeathWidgetClass && PauseWidgetClass);
 
 	DeathWidgetPopup = CreateWidget(GetWorld(), DeathWidgetClass);
+	EndgameMenuPopup = CreateWidget(GetWorld(), EndgameMenuClass);
 	
 	PlayerWidgets.Add(EGameState::InGame, CreateWidget<UPlayerWidget>(GetWorld(), PlayerWidgetClass));
 	PlayerWidgets.Add(EGameState::Pause, CreateWidget<UPauseWidget>(GetWorld(), PauseWidgetClass));
@@ -50,6 +51,15 @@ void APlayerHUD::CloseDeathWidget()
 	DeathWidgetPopup->RemoveFromParent();
 	GetOwningPlayerController()->SetShowMouseCursor(false);
 	GetOwningPlayerController()->SetInputMode(FInputModeGameOnly{});
+}
+
+void APlayerHUD::PopupEndgameMenu()
+{
+	if (!EndgameMenuPopup)
+		return;
+	EndgameMenuPopup->AddToViewport(15);
+	GetOwningPlayerController()->SetShowMouseCursor(true);
+	GetOwningPlayerController()->SetInputMode(FInputModeUIOnly{});
 }
 
 void APlayerHUD::OnGameStateChanged(EGameState NewState)

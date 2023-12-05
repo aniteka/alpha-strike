@@ -8,6 +8,7 @@
 #include "Ai/DeathMatch/DEPRECATED_AIDeathMatchTeamManager.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/TargetPoint.h"
+#include "UI/Player/PlayerHUD.h"
 
 bool FBotSpawnInfo::IsValid() const
 {
@@ -28,6 +29,8 @@ void AMainGameMode::HandleStartingNewPlayer_Implementation(APlayerController* Ne
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 
 	FGenericTeamId::SetAttitudeSolver(MainTeamAttitudeSolver);
+
+	InitMatchCountdown();
 	
 	InitPlayerTeamType();
 	InitPlayerSpawnIndex();
@@ -89,6 +92,24 @@ ACharacter* AMainGameMode::RespawnAndInitBotByController(AAIDeathMatchCharacterC
 		Bot, GetMaterialForTeam(static_cast<ETeamType>(Controller->GetGenericTeamId().GetId())));
 	
 	return Bot;
+}
+
+float AMainGameMode::GetRemainingMatchCountdown() const
+{
+	return GetWorld()->GetTimerManager().GetTimerRemaining(MatchCountdown);
+}
+
+void AMainGameMode::InitMatchCountdown()
+{
+	GetWorld()->GetTimerManager()
+		.SetTimer(MatchCountdown, this, &AMainGameMode::TryEndMatch, DefaultMatchCountdown);
+}
+
+void AMainGameMode::TryEndMatch()
+{
+	const auto PlayerController = GetWorld()->GetFirstPlayerController();
+	AGameMode::SetPause(PlayerController);
+	PlayerController->GetHUD<APlayerHUD>()->PopupEndgameMenu();
 }
 
 void AMainGameMode::InitPlayerSpawnIndex()

@@ -78,6 +78,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	ACharacter* RespawnAndInitBotByController(AAIDeathMatchCharacterController* Controller);
 
+	UFUNCTION(BlueprintPure, Category = "Deathmatch")
+	float GetRemainingMatchCountdown() const;
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Spawn")
 	TMap<ETeamType, FTeamInfo> TeamInfos;
@@ -91,8 +94,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Deathmatch")
 	float RespawnTime = 5.f;
+
+	UPROPERTY(EditAnywhere, Category = "Deathmatch")
+	float DefaultMatchCountdown = 4.f * 60.f;
 	
 private:
+	void InitMatchCountdown();
+	void TryEndMatch();
+	
 	void InitPlayerSpawnIndex();
 	void InitPlayerTeamType();
 	
@@ -103,4 +112,5 @@ private:
 	ACharacter* SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const;
 
 	EGameState State;
+	FTimerHandle MatchCountdown;
 };
