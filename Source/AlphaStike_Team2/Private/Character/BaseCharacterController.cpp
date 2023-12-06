@@ -7,7 +7,7 @@
 #include "Character/BaseCharacter.h"
 #include "Components/HealthComponent.h"
 #include "Components/WeaponComponent.h"
-#include "GameModes/GameModeDM.h"
+#include "GameModes/MainGameMode.h"
 #include "UI/Player/PlayerHUD.h"
 
 
@@ -69,6 +69,9 @@ void ABaseCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SwitchWeaponAction, ETriggerEvent::Started, this, &ABaseCharacterController::SwitchWeapon);
 
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ABaseCharacterController::GamePause);
+
+		EnhancedInputComponent->BindAction(OpenKdMenuAction, ETriggerEvent::Started, this, &ABaseCharacterController::OpenKdMenu);
+		EnhancedInputComponent->BindAction(OpenKdMenuAction, ETriggerEvent::Completed, this, &ABaseCharacterController::CloseKdMenu);
 	}
 }
 
@@ -76,68 +79,76 @@ void ABaseCharacterController::Move(const FInputActionValue& Value)
 {
 	FVector2D Movement = Value.Get<FVector2D>();
 	
-	if (BaseCharacter) {
-		BaseCharacter->AddMovementInput(BaseCharacter->GetActorForwardVector(), Movement.Y);
-		BaseCharacter->AddMovementInput(BaseCharacter->GetActorRightVector(), Movement.X);
+	if (GetPawn()) {
+		GetPawn()->AddMovementInput(GetPawn()->GetActorForwardVector(), Movement.Y);
+		GetPawn()->AddMovementInput(GetPawn()->GetActorRightVector(), Movement.X);
 	}
 }
 
 void ABaseCharacterController::Look(const FInputActionValue& Value)
 {
 	FVector2D LookVector = Value.Get<FVector2D>();
-	if (BaseCharacter) {
-		BaseCharacter->AddControllerYawInput(LookVector.X);
-		BaseCharacter->AddControllerPitchInput(-LookVector.Y);
+	if (GetPawn()) {
+		GetPawn()->AddControllerYawInput(LookVector.X);
+		GetPawn()->AddControllerPitchInput(-LookVector.Y);
 
-		BaseCharacter->RotateHands(-LookVector.Y);
+		GetPawn<ABaseCharacter>()->RotateHands(-LookVector.Y);
 	}
 }
 
 void ABaseCharacterController::StartCrouch(const FInputActionValue& Value)
 {
-	if (BaseCharacter) {
+	if (GetPawn()) {
 		BaseCharacter->Crouch();
 	}
 }
 
 void ABaseCharacterController::StopCrouch(const FInputActionValue& Value)
 {
-	if (BaseCharacter) {
+	if (GetPawn()) {
 		BaseCharacter->UnCrouch();
 	}
 }
 
 void ABaseCharacterController::Jump(const FInputActionValue& Value)
 {
-	if (BaseCharacter) {
+	if (GetPawn()) {
 		BaseCharacter->Jump();
 	}
 }
 
 void ABaseCharacterController::StartFire(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if(!GetPawn()) return;
+	
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->StartFire();
 	}
 }
 
 void ABaseCharacterController::StopFire(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if(!GetPawn()) return;
+
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->StopFire();
 	}
 }
 
 void ABaseCharacterController::Reload(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if(!GetPawn()) return;
+	
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->Reload();
 	}
 }
 
 void ABaseCharacterController::SwitchWeapon(const FInputActionValue& Value)
 {
-	if (auto WeaponComponent = BaseCharacter->FindComponentByClass<UWeaponComponent>()) {
+	if(!GetPawn()) return;
+	
+	if (auto WeaponComponent = GetPawn()->FindComponentByClass<UWeaponComponent>()) {
 		WeaponComponent->SwitchWeapon();
 	}
 }
@@ -168,10 +179,22 @@ void ABaseCharacterController::OnGameStateChanged(EGameState NewState)
 		bShowMouseCursor = true;
 	}
 }
-	
+
+void ABaseCharacterController::OpenKdMenu(const FInputActionValue& InputActionValue)
+{
+	if(const auto PlayerHud = GetHUD<APlayerHUD>())
+		PlayerHud->PopupKdMenu();
+}
+
+void ABaseCharacterController::CloseKdMenu(const FInputActionValue& InputActionValue)
+{
+	if(const auto PlayerHud = GetHUD<APlayerHUD>())
+		PlayerHud->CloseKdMenu();
+}
+
 void ABaseCharacterController::OnDeathCallback(AController* Damaged, AController* Causer)
 {
-	const auto GameModeDM = GetWorld()->GetAuthGameMode<AGameModeDM>();
+	const auto GameModeDM = GetWorld()->GetAuthGameMode<AMainGameMode>();
 	check(GameModeDM && GetPawn());
 	
 	GetPawn()->SetLifeSpan(GameModeDM->GetRespawnTime());

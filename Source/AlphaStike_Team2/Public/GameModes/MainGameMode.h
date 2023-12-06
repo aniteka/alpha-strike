@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AlphaStrikeTypes.h"
 #include "GameModes/BaseGameMode.h"
-#include "GameModeDM.generated.h"
+#include "MainGameMode.generated.h"
 
 class AAIDeathMatchCharacterController;
 class AAIRoute;
@@ -46,17 +46,17 @@ struct FTeamInfo
 	TArray<TSoftObjectPtr<AAIRoute>> Routes;
 
 	UPROPERTY(EditAnywhere)
-	UMaterial* TeamMaterial;
+	UMaterialInterface* TeamMaterial;
 };
 
 
 UCLASS()
-class ALPHASTIKE_TEAM2_API AGameModeDM : public ABaseGameMode
+class ALPHASTIKE_TEAM2_API AMainGameMode : public ABaseGameMode
 {
 	GENERATED_BODY()
 
 public:
-	AGameModeDM();
+	AMainGameMode();
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
 	ETeamType GetPlayerTeamType() const { return PlayerTeamType; }
@@ -67,8 +67,9 @@ public:
 	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
 
 	FOnGameStateChanged OnGameStateChanged;
-	
-	UMaterial* GetMaterialForTeam(ETeamType Type) const;
+
+	UFUNCTION(BlueprintPure)
+	UMaterialInterface* GetMaterialForTeam(ETeamType Type) const;
 
 	float GetRespawnTime() const { return RespawnTime; }
 
@@ -78,8 +79,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	ACharacter* RespawnAndInitBotByController(AAIDeathMatchCharacterController* Controller);
 
+	UFUNCTION(BlueprintPure, Category = "Deathmatch")
+	float GetRemainingMatchCountdown() const;
+
 protected:
-	UPROPERTY(EditAnywhere, Category = "Deathmatch|Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Deathmatch|Spawn")
 	TMap<ETeamType, FTeamInfo> TeamInfos;
 
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Player")
@@ -91,16 +95,23 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Deathmatch")
 	float RespawnTime = 5.f;
+
+	UPROPERTY(EditAnywhere, Category = "Deathmatch")
+	float DefaultMatchCountdown = 4.f * 60.f;
 	
 private:
+	void InitMatchCountdown();
+	void TryEndMatch();
+	
 	void InitPlayerSpawnIndex();
 	void InitPlayerTeamType();
 	
-	void InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial) const;
+	void InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterialInterface* TeamMaterial) const;
 
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);
 	ACharacter* SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const;
 
 	EGameState State;
+	FTimerHandle MatchCountdown;
 };

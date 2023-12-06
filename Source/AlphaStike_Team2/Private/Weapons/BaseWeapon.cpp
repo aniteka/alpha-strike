@@ -10,6 +10,13 @@ ABaseWeapon::ABaseWeapon()
 
 }
 
+void ABaseWeapon::InitForAI()
+{
+	CurrentAmmoData = AIAmmoData;
+	Spread = AISpread;
+	AmountOfDamage = AIAmountOfDamage;
+}
+
 void ABaseWeapon::Reload()
 {
 	if (!CurrentAmmoData.Infinite) {

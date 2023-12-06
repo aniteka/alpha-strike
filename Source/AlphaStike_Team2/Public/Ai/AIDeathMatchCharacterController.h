@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DetourCrowdAIController.h"
-#include "GameModes/GameModeDM.h"
+#include "GameModes/MainGameMode.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "AIDeathMatchCharacterController.generated.h"
 

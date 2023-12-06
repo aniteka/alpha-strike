@@ -21,6 +21,11 @@ public:
 	void PopupDeathWidget();
 	void CloseDeathWidget();
 	
+	void PopupEndgameMenu();
+
+	void PopupKdMenu();
+	void CloseKdMenu();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> PlayerWidgetClass;
@@ -31,12 +36,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> DeathWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> EndgameMenuClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> KdMenuClass;
+	
 private:
 	UPROPERTY()
 	UPlayerWidget* PlayerWidget;
 	UPROPERTY()
 	UUserWidget* DeathWidgetPopup;
-
+	UPROPERTY()
+	UUserWidget* EndgameMenuPopup;
+	UPROPERTY()
+	UUserWidget* KdMenu;
+	
 	void OnGameStateChanged(EGameState NewState);
 
 private:
