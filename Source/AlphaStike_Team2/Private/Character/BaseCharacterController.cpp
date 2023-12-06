@@ -69,6 +69,9 @@ void ABaseCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SwitchWeaponAction, ETriggerEvent::Started, this, &ABaseCharacterController::SwitchWeapon);
 
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Started, this, &ABaseCharacterController::GamePause);
+
+		EnhancedInputComponent->BindAction(OpenKdMenuAction, ETriggerEvent::Started, this, &ABaseCharacterController::OpenKdMenu);
+		EnhancedInputComponent->BindAction(OpenKdMenuAction, ETriggerEvent::Completed, this, &ABaseCharacterController::CloseKdMenu);
 	}
 }
 
@@ -176,7 +179,19 @@ void ABaseCharacterController::OnGameStateChanged(EGameState NewState)
 		bShowMouseCursor = true;
 	}
 }
-	
+
+void ABaseCharacterController::OpenKdMenu(const FInputActionValue& InputActionValue)
+{
+	if(const auto PlayerHud = GetHUD<APlayerHUD>())
+		PlayerHud->PopupKdMenu();
+}
+
+void ABaseCharacterController::CloseKdMenu(const FInputActionValue& InputActionValue)
+{
+	if(const auto PlayerHud = GetHUD<APlayerHUD>())
+		PlayerHud->CloseKdMenu();
+}
+
 void ABaseCharacterController::OnDeathCallback(AController* Damaged, AController* Causer)
 {
 	const auto GameModeDM = GetWorld()->GetAuthGameMode<AMainGameMode>();

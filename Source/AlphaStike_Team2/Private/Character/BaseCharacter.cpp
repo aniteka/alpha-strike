@@ -113,7 +113,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
-void ABaseCharacter::InitTeamsVisualSigns(UMaterial* Material)
+void ABaseCharacter::InitTeamsVisualSigns(UMaterialInterface* Material)
 {
 	MeshBody->SetMaterial(1, Material);
 }

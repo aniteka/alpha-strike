@@ -35,6 +35,9 @@ protected:
 	void GamePause(const FInputActionValue& Value);
 	void OnGameStateChanged(EGameState NewState);
 
+	void OpenKdMenu(const FInputActionValue& InputActionValue);
+	void CloseKdMenu(const FInputActionValue& InputActionValue);
+
 	void OnDeathCallback(AController* Damaged, AController* Causer);
 	
 public:
@@ -76,6 +79,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* PauseAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* OpenKdMenuAction;
 	
 private:
 	ABaseCharacter* BaseCharacter;

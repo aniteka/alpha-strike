@@ -46,7 +46,7 @@ struct FTeamInfo
 	TArray<TSoftObjectPtr<AAIRoute>> Routes;
 
 	UPROPERTY(EditAnywhere)
-	UMaterial* TeamMaterial;
+	UMaterialInterface* TeamMaterial;
 };
 
 
@@ -67,8 +67,9 @@ public:
 	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
 
 	FOnGameStateChanged OnGameStateChanged;
-	
-	UMaterial* GetMaterialForTeam(ETeamType Type) const;
+
+	UFUNCTION(BlueprintPure)
+	UMaterialInterface* GetMaterialForTeam(ETeamType Type) const;
 
 	float GetRespawnTime() const { return RespawnTime; }
 
@@ -82,7 +83,7 @@ public:
 	float GetRemainingMatchCountdown() const;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Deathmatch|Spawn")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Deathmatch|Spawn")
 	TMap<ETeamType, FTeamInfo> TeamInfos;
 
 	UPROPERTY(EditAnywhere, Category = "Deathmatch|Player")
@@ -105,7 +106,7 @@ private:
 	void InitPlayerSpawnIndex();
 	void InitPlayerTeamType();
 	
-	void InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial) const;
+	void InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterialInterface* TeamMaterial) const;
 
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);

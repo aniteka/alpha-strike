@@ -8,6 +8,7 @@
 #include "Ai/DeathMatch/DEPRECATED_AIDeathMatchTeamManager.h"
 #include "Character/BaseCharacter.h"
 #include "Engine/TargetPoint.h"
+#include "GameStates/MainGameState.h"
 #include "UI/Player/PlayerHUD.h"
 
 bool FBotSpawnInfo::IsValid() const
@@ -22,6 +23,7 @@ AMainGameMode::AMainGameMode()
 	PrimaryActorTick.bCanEverTick = true;
 
 	DefaultPawnClass = nullptr;
+	GameStateClass = AMainGameState::StaticClass();
 }
 
 void AMainGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
@@ -49,7 +51,7 @@ TSoftObjectPtr<AAIRoute> AMainGameMode::GetRouteForTeam(ETeamType Type)
 }
 
 
-UMaterial* AMainGameMode::GetMaterialForTeam(ETeamType Type) const
+UMaterialInterface* AMainGameMode::GetMaterialForTeam(ETeamType Type) const
 {
 	return TeamInfos[Type].TeamMaterial;
 }
@@ -128,7 +130,7 @@ void AMainGameMode::InitPlayerTeamType()
 		UE_LOG(LogTemp, Error, TEXT("TeamInfos.Contains(PlayerTeamType) == false"));
 }
 
-void AMainGameMode::InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterial* TeamMaterial) const
+void AMainGameMode::InitTeamsVisualSignsForCharacter(ACharacter* Character, UMaterialInterface* TeamMaterial) const
 {
 	if(const auto BaseCharacter = Cast<ABaseCharacter>(Character))
 		BaseCharacter->InitTeamsVisualSigns(TeamMaterial);
