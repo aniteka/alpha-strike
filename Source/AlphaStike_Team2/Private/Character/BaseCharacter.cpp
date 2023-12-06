@@ -199,5 +199,6 @@ void ABaseCharacter::SwapWeapon(USkeletalMesh* NewWeaponSkeletalMesh)
 {
 	R_Weapon->SetSkeletalMesh(NewWeaponSkeletalMesh);
 	L_Weapon->SetSkeletalMesh(NewWeaponSkeletalMesh);
+	UE_LOG(LogTemp, Warning, TEXT("CHARACTER_SWAPPED_WEAPON"));
 }
 

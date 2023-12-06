@@ -58,7 +58,7 @@ public:
 	}
 
 	inline FWeaponData GetWeaponData() const{
-		return DefaultWeaponData;
+		return WeaponData;
 	}
 
 	FOnClipEmpty OnClipEmpty;
@@ -83,7 +83,7 @@ protected:
 	FAmmoData DefaultAmmoData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	FWeaponData DefaultWeaponData;
+	FWeaponData WeaponData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 	float ShotDistance = 2000.f;
@@ -108,5 +108,4 @@ protected:
 private:
 
 	FAmmoData CurrentAmmoData;
-	FWeaponData WeaponData;
 };

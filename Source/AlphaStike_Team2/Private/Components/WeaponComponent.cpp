@@ -128,11 +128,14 @@ void UWeaponComponent::TakeWeapon()
 	{
 		return;
 	}
-	if (!CurrentWeapon->GetWeaponData().Weapon_Skeletal_Mesh)
-	{
+
+	USkeletalMesh* Weapon_Skeletal_Mesh = CurrentWeapon->GetWeaponData().Weapon_Skeletal_Mesh;
+	if (!Weapon_Skeletal_Mesh)
+	{	
+		UE_LOG(LogTemp, Warning, TEXT("FAIL TO GET WEAPON SKELETAL MESH"));
 		return;		
 	}
-	Player->SwapWeapon(CurrentWeapon->GetWeaponData().Weapon_Skeletal_Mesh);	
+	Player->SwapWeapon(Weapon_Skeletal_Mesh);
 }
 
 
