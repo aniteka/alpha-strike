@@ -81,6 +81,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeamData")
 	TArray<ETeamType> TeamTypes;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Robot")
 	TSubclassOf<ABaseCharacter> BaseCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelData")
