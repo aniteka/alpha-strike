@@ -5,6 +5,8 @@
 #include "Character/BaseCharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Weapons/Projectile.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 
 void ARifle::StartFire()
@@ -14,7 +16,8 @@ void ARifle::StartFire()
 
 void ARifle::Shot()
 {
-	if (IsClipEmpty()) {
+	if (IsAmmoEmpty()) {
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), AmmoEmptySound, GetActorLocation());
 		return;
 	}
 

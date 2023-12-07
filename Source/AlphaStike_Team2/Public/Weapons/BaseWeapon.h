@@ -105,8 +105,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	float Spread = 2.f;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Weapon|AI")
 	float AISpread = 2.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* AmmoEmptySound;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Sound")
 	USoundCue* FireSound;

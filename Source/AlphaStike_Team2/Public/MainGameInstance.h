@@ -20,7 +20,20 @@ struct FLevelData {
 	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Level")
 	FName LevelName = NAME_None;
+	
+	// Must be the same name as in GameModeData
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "Level")
+	FName LevelGameModeName = NAME_None;
 };
+
+USTRUCT(BlueprintType)
+struct FGameModeData {
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category = "GameMode")
+	FName GameModeName = NAME_None;
+};
+
 
 
 UCLASS()
@@ -34,6 +47,14 @@ public:
 
 	TArray<FLevelData> GetLevelsData() {
 		return Levels;
+	}	
+	
+	TArray<FGameModeData> GetGameModesData() {
+		return GameModes;
+	}
+	
+	TArray<ETeamType> GetTeamData() {
+		return TeamTypes;
 	}
 
 	inline FName GetMenuLevelName()const {
@@ -45,6 +66,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelData")
 	TArray<FLevelData> Levels;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameModeData")
+	TArray<FGameModeData> GameModes;	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeamData")
+	TArray<ETeamType> TeamTypes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelData")
 	FName MenuLevelName = "Menu";

@@ -56,9 +56,6 @@ void ABaseCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ABaseCharacterController::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABaseCharacterController::Look);
 
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &ABaseCharacterController::StartCrouch);
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ABaseCharacterController::StopCrouch);
-
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ABaseCharacterController::Jump);
 
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ABaseCharacterController::StartFire);
@@ -93,20 +90,6 @@ void ABaseCharacterController::Look(const FInputActionValue& Value)
 		GetPawn()->AddControllerPitchInput(-LookVector.Y);
 
 		GetPawn<ABaseCharacter>()->RotateHands(-LookVector.Y);
-	}
-}
-
-void ABaseCharacterController::StartCrouch(const FInputActionValue& Value)
-{
-	if (GetPawn()) {
-		BaseCharacter->Crouch();
-	}
-}
-
-void ABaseCharacterController::StopCrouch(const FInputActionValue& Value)
-{
-	if (GetPawn()) {
-		BaseCharacter->UnCrouch();
 	}
 }
 

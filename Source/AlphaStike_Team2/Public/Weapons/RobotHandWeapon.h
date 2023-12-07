@@ -25,11 +25,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
 	UNiagaraSystem* BeamTraceEffect;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	UMaterialInterface* DecalMaterial;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
 	FString BeamEndName = "BeamEnd";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shot")
 	bool bDrawDebugTracers = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* HitSound;
 	
 	
 	void SpawnFX();
@@ -43,5 +49,6 @@ private:
 	void Shot();
 	void ActiveFX(bool IsActive);
 	void SetupTraceEffect(const FVector& StartPoint, const FVector& EndPoint);
+	void SpawnShotDecal(const FHitResult& HitResult);
 
 };

@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Components/DecalComponent.h"
 
 
 void ARobotHandWeapon::BeginPlay()
@@ -78,6 +79,7 @@ void ARobotHandWeapon::Shot()
 		EndPoint = HitResult.ImpactPoint;
 		SetupTraceEffect(HandIndex == 0 ? LeftHandMuzzle : RightHandMuzzle, EndPoint);
 		HandIndex = (HandIndex + 1) % 2;
+		SpawnShotDecal(HitResult);
 
 		if (!OtherPlayer) {
 			return;
@@ -106,4 +108,16 @@ void ARobotHandWeapon::SetupTraceEffect(const FVector& StartPoint, const FVector
 	if (BeamNiagaraComponent) {
 		BeamNiagaraComponent->SetNiagaraVariableVec3(BeamEndName, EndPoint);
 	}
+}
+
+void ARobotHandWeapon::SpawnShotDecal(const FHitResult& HitResult)
+{
+	auto ShotDecalComp = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), DecalMaterial,FVector(10.f), HitResult.ImpactPoint, HitResult.ImpactNormal.Rotation());
+
+	if (ShotDecalComp) {
+		ShotDecalComp->SetFadeOut(5.f, 0.6f);
+	}
+	
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), HitSound, HitResult.ImpactPoint);
+
 }

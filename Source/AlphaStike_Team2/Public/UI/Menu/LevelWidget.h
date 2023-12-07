@@ -20,6 +20,14 @@ class ALPHASTIKE_TEAM2_API ULevelWidget : public UUserWidget
 
 public:
 	void SetupLevel(const FLevelData& Data);
+
+	inline FLevelData& GetLevelData(){
+		return LevelData;
+	}
+
+	inline UImage* GetLevelImage() const {
+		return LevelImage;
+	}
 	
 	FOnLevelSelected OnLevelSelected;
 

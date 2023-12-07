@@ -12,8 +12,6 @@
 UWeaponComponent::UWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
-	
 }
 
 void UWeaponComponent::StartFire()
@@ -41,21 +39,33 @@ void UWeaponComponent::Reload()
 		if (!Player) {
 			return;
 		}
+			
+		if (Cast<APlayerController>(Player->GetController())) {
+			UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAttached(ReloadSound, Player->GetMesh(), BagSocketName);
+			IsReloadSoundPlaying = true;
 
-		UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAttached(ReloadSound, Player->GetMesh(), BagSocketName);
-		IsReloadSoundPlaying = true;
+			if (!AudioComponent) {
+				return;
+			}
 
-		if (!AudioComponent) {
-			return;
+			AudioComponent->OnAudioFinishedNative.AddLambda([&](UAudioComponent* AudioComponent) {
+				IsReloadSoundPlaying = false;
+				CurrentWeapon->Reload();
+			});
+		}
+		else {
+			FTimerHandle AIReloadTimerHandle;
+			IsReloadSoundPlaying = true;
+			OnStartWeaponReloading.Broadcast(this);
+			GetWorld()->GetTimerManager().SetTimer(AIReloadTimerHandle, [this]()
+				{
+					IsReloadSoundPlaying = false;
+					CurrentWeapon->Reload();
+					OnEndWeaponReloading.Broadcast(this);
+				}, 3.f, false);
 		}
 
-		OnStartWeaponReloading.Broadcast(this);
 		
-		AudioComponent->OnAudioFinishedNative.AddLambda([&](UAudioComponent* AudioComponent) {
-			IsReloadSoundPlaying = false;
-			CurrentWeapon->Reload();
-			OnEndWeaponReloading.Broadcast(this);
-		});
 
 	}
 }

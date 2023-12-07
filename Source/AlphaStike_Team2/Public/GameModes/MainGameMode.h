@@ -66,8 +66,6 @@ public:
 
 	TSoftObjectPtr<AAIRoute> GetRouteForTeam(ETeamType Type);
 
-	FOnGameStateChanged OnGameStateChanged;
-
 	UFUNCTION(BlueprintPure)
 	UMaterialInterface* GetMaterialForTeam(ETeamType Type) const;
 

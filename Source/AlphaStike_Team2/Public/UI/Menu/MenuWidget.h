@@ -10,6 +10,8 @@
 class UButton;
 class UVerticalBox;
 class UHorizontalBox;
+class ULevelWidget;
+class UTeamWidget;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API UMenuWidget : public UUserWidget
@@ -22,6 +24,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> LevelWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> GameModeWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> TeamWidgetClass;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* StartGameButton;
@@ -42,6 +50,12 @@ protected:
 	UHorizontalBox* LevelsHorizontalBox;
 
 	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* GameModesHorizontalBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* TeamsHorizontalBox;
+
+	UPROPERTY(meta = (BindWidget))
 	UButton* SelectLevelButton;
 
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)override;
@@ -49,8 +63,12 @@ protected:
 private:
 
 	void CreateLevels();
+	void CreateGameModes();
+	void CreateTeams();
+
 	void InitializeFirstLevel();
 	void SetupLevel(const FLevelData& Data);
+	void SortLevelsByGameMode(FName GameModeName);
 
 	UFUNCTION()
 	void OnStartGame();
@@ -61,8 +79,15 @@ private:
 	UFUNCTION()
 	void OnSelectLevel();
 
+	UFUNCTION()
+	void OnSelectTeam(UTeamWidget* SelectedTeam);
+
 	FLevelData StartLevelData;
 
 	UMainGameInstance* GetGameInstance()const;
+
+	TArray<ULevelWidget*> Levels;
+
+	TArray<UTeamWidget*> Teams;
 
 };
