@@ -26,8 +26,14 @@ public:
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult
 	);
 
+	void SetAvailable();
+	void SetUnavailable();
+	bool IsAvailable() const { return bIsAvailable; }
+	
 protected:
-
+	virtual void BeginPlay() override;
+	
+protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Pickup Components")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
@@ -37,7 +43,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Pickup Components")
 	TObjectPtr<USphereComponent> ColliderComponent;	
 
+	UPROPERTY(EditAnywhere, Category = "Options")
+	float RespawnKd = 60.f;
+	
 	TObjectPtr<ABaseCharacter> Character;
 
 	virtual void Pickup();
+
+private:
+	bool bIsAvailable = true;
 };
+
