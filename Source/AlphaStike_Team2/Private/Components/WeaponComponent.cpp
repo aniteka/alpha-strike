@@ -90,6 +90,14 @@ bool UWeaponComponent::TryToGetCurrentAmmoData(FAmmoData& AmmoData) const
 	return true;
 }
 
+void UWeaponComponent::SetWeaponOnIndex(int32 Index)
+{
+	if (CasSwitchWeapon()) {
+		UE_LOG(LogTemp, Display, TEXT("SwitchWeapon"));
+		WeaponIndex = Index;
+		TakeWeapon();
+	}
+}
 
 void UWeaponComponent::BeginPlay()
 {

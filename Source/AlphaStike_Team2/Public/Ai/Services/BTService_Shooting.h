@@ -7,6 +7,8 @@
 #include "Components/WeaponComponent.h"
 #include "BTService_Shooting.generated.h"
 
+struct FNodeMemory_Shooting;
+
 UCLASS()
 class ALPHASTIKE_TEAM2_API UBTService_Shooting : public UBTService
 {
@@ -30,4 +32,9 @@ protected:
 private:
 	UFUNCTION()
 	void StartFire(UWeaponComponent* WeaponComponent);
+	void Shot(FNodeMemory_Shooting* const NodeInstance);
+
+	void ChooseWeapon(UWeaponComponent* WeaponComponent);
+	
+	float GetShotInterval() const;
 };

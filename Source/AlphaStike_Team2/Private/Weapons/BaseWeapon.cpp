@@ -30,6 +30,11 @@ void ABaseWeapon::Reload()
 	CurrentAmmoData.BulletsNum = DefaultAmmoData.BulletsNum;
 }
 
+void ABaseWeapon::AddClips(int32 Delta)
+{
+	CurrentAmmoData.ClipNum += Delta;
+}
+
 void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();

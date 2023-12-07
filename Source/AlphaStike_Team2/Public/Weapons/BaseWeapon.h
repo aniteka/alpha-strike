@@ -55,6 +55,8 @@ public:
 		return CurrentAmmoData.BulletsNum < DefaultAmmoData.BulletsNum && CurrentAmmoData.ClipNum >0;
 	}
 
+	void AddClips(int32 Delta);
+	
 	inline FAmmoData GetAmmoData()const {
 		return CurrentAmmoData;
 	}

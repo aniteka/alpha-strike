@@ -29,8 +29,13 @@ public:
 	void SwitchWeapon();
 	bool TryToGetCurrentAmmoData(FAmmoData& AmmoData)const;
 
+	void SetWeaponOnIndex(int32 Index);
+	
+	const TArray<ABaseWeapon*>& GetWeapons() const { return Weapons; }
 	ABaseWeapon* GetCurrentWeapon() const { return CurrentWeapon; }
 	
+	inline bool CanFire() const { return CurrentWeapon && !IsReloadSoundPlaying; }
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -61,7 +66,6 @@ private:
 
 	void CreateWeapon();
 	inline bool CanReload()const{ return CurrentWeapon->CanReload() && !IsReloadSoundPlaying; }
-	inline bool CanFire()const { return CurrentWeapon && !IsReloadSoundPlaying; }
 	inline bool CasSwitchWeapon()const { return Weapons.Num() > 0 && !IsReloadSoundPlaying; }
 
 	void TakeWeapon();

@@ -33,11 +33,21 @@ ABasePickupActor::ABasePickupActor()
 	RotatingComponent = CreateDefaultSubobject<URotatingMovementComponent>("Rotating Component");
 }
 
+void ABasePickupActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetAvailable();
+}
+
 void ABasePickupActor::OnBeginOverlapComponentEvent(
 	UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult
 )
-{		
+{
+	if(!IsAvailable())
+		return;
+	
 	//UE_LOG(LogTemp, Warning, TEXT("------------OVERLAP------------"));
 
 	Character = Cast<ABaseCharacter>(OtherActor);
@@ -48,7 +58,24 @@ void ABasePickupActor::OnBeginOverlapComponentEvent(
 	}
 
 	Pickup();
-	Destroy();
+	SetUnavailable();
+}
+
+void ABasePickupActor::SetAvailable()
+{
+	bIsAvailable = true;
+	MeshComponent->SetVisibility(true, true);
+	Tags.Add("Available");
+}
+
+void ABasePickupActor::SetUnavailable()
+{
+	bIsAvailable = false;
+	MeshComponent->SetVisibility(false, true);
+	Tags.Remove("Available");
+
+	FTimerHandle TempTimerManager;
+	GetWorld()->GetTimerManager().SetTimer(TempTimerManager, this, &ABasePickupActor::SetAvailable, RespawnKd, false);
 }
 
 void ABasePickupActor::Pickup()
