@@ -39,9 +39,6 @@ protected:
 	TSubclassOf<ABaseCharacter> DefaultRobotClass;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* StartGameButton;
-
-	UPROPERTY(meta = (BindWidget))
 	UButton* SelectLevelButton;
 
 	UPROPERTY(meta = (BindWidget))

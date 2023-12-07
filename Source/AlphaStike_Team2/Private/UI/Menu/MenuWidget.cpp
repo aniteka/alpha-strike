@@ -14,10 +14,6 @@
 void UMenuWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-	if (StartGameButton) {
-		StartGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnStartGame);
-	}	
 	
 	if (QuitGameButton) {
 		QuitGameButton->OnClicked.AddDynamic(this, &UMenuWidget::OnQuitGame);
