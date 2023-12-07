@@ -23,20 +23,26 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category = "Component")
 	UProjectileMovementComponent* ProjectileMovementComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rocket")
 	USphereComponent* SphereComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rocket")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rocket")
 	float Damage = 30;	
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rocket")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rocket")
 	float DamageRadius = 150.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rocket")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rocket")
 	bool DoFullDamage = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rocket")
+	UParticleSystem* ExplosionParticles;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rocket")
+	USoundBase* ExplosionSound;
 
 private:
 	UFUNCTION()
