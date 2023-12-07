@@ -102,15 +102,17 @@ void UBTService_Shooting::Shot(FNodeMemory_Shooting* const NodeInstance)
 		TimerDelegate.BindUObject(this, &UBTService_Shooting::Shot, NodeInstance);
 		GetWorld()->GetTimerManager().SetTimer(NodeInstance->ShootingTimerHandle, TimerDelegate, GetShotInterval(), false);
 	}
-	if(!NodeInstance->WeaponComponent->CanFire())
-	{
-		NodeInstance->WeaponComponent->Reload();
-	}
 	
 	const auto CurrentWeapon = NodeInstance->WeaponComponent->GetCurrentWeapon();
 	if(!CurrentWeapon)
 		return;
 	const auto AmmoData = CurrentWeapon->GetAmmoData();
+
+	if(AmmoData.BulletsNum == 0 && AmmoData.ClipNum != 0)
+	{
+		NodeInstance->WeaponComponent->Reload();
+	}
+	
 	if(AmmoData.BulletsNum == 0 && AmmoData.ClipNum == 0 && !AmmoData.Infinite)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(NodeInstance->ShootingTimerHandle);

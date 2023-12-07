@@ -44,7 +44,10 @@ void ABasePickupActor::OnBeginOverlapComponentEvent(
 	UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, 
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult
 )
-{		
+{
+	if(!IsAvailable())
+		return;
+	
 	//UE_LOG(LogTemp, Warning, TEXT("------------OVERLAP------------"));
 
 	Character = Cast<ABaseCharacter>(OtherActor);
