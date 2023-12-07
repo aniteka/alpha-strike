@@ -39,7 +39,9 @@ void ARifle::Shot()
 
 	auto Direction = (EndPoint - (HandIndex == 0 ? LeftHandMuzzleLocation: RightHandMuzzleLocation)).GetSafeNormal();
 
-	FTransform Spawn(GetActorRotation(), (HandIndex == 0 ? LeftHandMuzzleLocation : RightHandMuzzleLocation));
+	FRotator BulletRotation = { Player->GetRightHandMesh()->GetSocketRotation(RightHandMuzzleSocketName)};
+
+	FTransform Spawn(BulletRotation, (HandIndex == 0 ? LeftHandMuzzleLocation : RightHandMuzzleLocation));
 	auto Rocket = GetWorld()->SpawnActorDeferred<AProjectile>(ProjectileClass, Spawn);
 
 	if (Rocket) {
