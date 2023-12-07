@@ -32,6 +32,7 @@ void AMainGameMode::HandleStartingNewPlayer_Implementation(APlayerController* Ne
 
 	FGenericTeamId::SetAttitudeSolver(MainTeamAttitudeSolver);
 
+	SetDefaultPawn();
 	InitMatchCountdown();
 	
 	InitPlayerTeamType();
@@ -188,6 +189,17 @@ ACharacter* AMainGameMode::SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo,
 	InitTeamsVisualSignsForCharacter(Bot, GetMaterialForTeam(TeamType));
 	
 	return Bot;
+}
+
+void AMainGameMode::SetDefaultPawn()
+{
+	auto GameInstance = Cast<UMainGameInstance>(GetGameInstance());
+
+	if (!GameInstance) {
+		return;
+	}
+
+	DefaultPawnClass = GameInstance->GetBaseCharacter();
 }
 
 

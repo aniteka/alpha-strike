@@ -27,6 +27,14 @@ void UMenuWidget::NativeOnInitialized()
 		SelectLevelButton->OnClicked.AddDynamic(this, &UMenuWidget::OnSelectLevel);
 	}
 
+	if (HeavyRobotButton) {
+		HeavyRobotButton->OnClicked.AddDynamic(this, &UMenuWidget::OnSelectHeavyRobot);
+	}
+	
+	if (DefaultRobotButton) {
+		DefaultRobotButton->OnClicked.AddDynamic(this, &UMenuWidget::OnSelectDefaultRobot);
+	}
+
 	if (StartAnimation) {
 		PlayAnimation(StartAnimation);
 	}
@@ -211,6 +219,28 @@ void UMenuWidget::OnSelectTeam(UTeamWidget* SelectedTeam)
 				CurrentTeam->SetRenderOpacity(0.5f);
 			}
 		}
+	}
+}
+
+void UMenuWidget::OnSelectHeavyRobot()
+{
+	auto GameInstance = GetGameInstance();
+
+	if (GameInstance) {
+		GameInstance->SetBaseCharacter(HeavyRobotClass);
+		HeavyRobotButton->SetRenderOpacity(1.f);
+		DefaultRobotButton->SetRenderOpacity(0.5f);
+	}
+}
+
+void UMenuWidget::OnSelectDefaultRobot()
+{
+	auto GameInstance = GetGameInstance();
+
+	if (GameInstance) {
+		GameInstance->SetBaseCharacter(DefaultRobotClass);
+		DefaultRobotButton->SetRenderOpacity(1.f);
+		HeavyRobotButton->SetRenderOpacity(0.5f);
 	}
 }
 

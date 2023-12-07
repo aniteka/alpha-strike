@@ -34,7 +34,7 @@ struct FGameModeData {
 	FName GameModeName = NAME_None;
 };
 
-
+class ABaseCharacter;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API UMainGameInstance : public UGameInstance
@@ -61,6 +61,14 @@ public:
 		return MenuLevelName;
 	}
 
+	inline void SetBaseCharacter(TSubclassOf<ABaseCharacter> Character) {
+		BaseCharacter = Character;
+	}
+
+	inline TSubclassOf<ABaseCharacter> GetBaseCharacter() {
+		return BaseCharacter;
+	}
+
 protected:
 	ETeamType PlayerTeamType = ETeamType::None;
 
@@ -72,6 +80,8 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TeamData")
 	TArray<ETeamType> TeamTypes;
+
+	TSubclassOf<ABaseCharacter> BaseCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "LevelData")
 	FName MenuLevelName = "Menu";

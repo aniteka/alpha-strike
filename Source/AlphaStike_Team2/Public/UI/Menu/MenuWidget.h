@@ -12,6 +12,7 @@ class UVerticalBox;
 class UHorizontalBox;
 class ULevelWidget;
 class UTeamWidget;
+class ABaseCharacter;
 
 UCLASS()
 class ALPHASTIKE_TEAM2_API UMenuWidget : public UUserWidget
@@ -31,11 +32,26 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> TeamWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<ABaseCharacter> HeavyRobotClass;	
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<ABaseCharacter> DefaultRobotClass;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* StartGameButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* QuitGameButton;
+	UButton* SelectLevelButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* QuitGameButton;	
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* HeavyRobotButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* DefaultRobotButton;
 
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* PreloaderAnimation;
@@ -54,9 +70,6 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* TeamsHorizontalBox;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* SelectLevelButton;
 
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)override;
 
@@ -81,6 +94,12 @@ private:
 
 	UFUNCTION()
 	void OnSelectTeam(UTeamWidget* SelectedTeam);
+
+	UFUNCTION()
+	void OnSelectHeavyRobot();
+
+	UFUNCTION()
+	void OnSelectDefaultRobot();
 
 	FLevelData StartLevelData;
 

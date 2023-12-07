@@ -109,6 +109,7 @@ private:
 	void SpawnAllTeams();
 	void SpawnTeam(const FTeamInfo& TeamInfo, ETeamType Type);
 	ACharacter* SpawnAndInitBotByInfo(const FBotSpawnInfo& SpawnInfo, ETeamType TeamType) const;
+	void SetDefaultPawn();
 
 	EGameState State;
 	FTimerHandle MatchCountdown;
